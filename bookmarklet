@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>我的 Bookmarklet 分享頁</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; }
+    .bookmarklet {
+      display: inline-block;
+      padding: 0.7em 1.4em;
+      margin: 1em 0;
+      background: #448aff;
+      color: #fff;
+      border-radius: 6px;
+      font-size: 1.1em;
+      text-decoration: none;
+      cursor: grab;
+      box-shadow: 0 2px 8px #448aff55;
+      transition: background 0.2s;
+    }
+    .bookmarklet:hover {
+      background: #2962ff;
+    }
+    .tip {
+      margin-top: 1em;
+      color: #555;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+  <h1>分享 Bookmarklet</h1>
+  <a class="bookmarklet" href="javascript:(function(){
+  // ========== 鄰近地區對照表 ==========
+  const nearbyMap = {
+    // 新界
+    "沙田":   ["沙田", "大圍", "火炭", "馬料水", "烏溪沙", "馬鞍山", "大埔"],
+    "大圍":   ["大圍", "沙田", "火炭", "車公廟"],
+    "馬鞍山": ["馬鞍山", "烏溪沙", "馬料水", "西貢", "沙田"],
+    "烏溪沙": ["烏溪沙", "馬鞍山", "馬料水", "沙田"],
+    "火炭":   ["火炭", "大圍", "沙田", "馬料水"],
+    "馬料水": ["馬料水", "火炭", "沙田", "馬鞍山", "烏溪沙"],
+    "大埔":   ["大埔", "大埔墟", "太和", "林村", "粉嶺", "沙田"],
+    "太和":   ["太和", "大埔", "大埔墟"],
+    "元朗":   ["元朗", "天水圍", "洪水橋", "錦田", "屏山", "朗屏", "流浮山"],
+    "天水圍":["天水圍", "元朗", "朗屏", "流浮山", "洪水橋"],
+    "荃灣":   ["荃灣", "葵涌", "青衣", "梨木樹", "大窩口"],
+    "屯門":   ["屯門", "兆康", "新墟", "蝴蝶灣", "龍門", "洪水橋"],
+    "粉嶺":   ["粉嶺", "上水", "聯和墟", "古洞", "大埔"],
+    "上水":   ["上水", "粉嶺", "古洞", "沙頭角"],
+    "西貢":   ["西貢", "將軍澳", "清水灣", "馬鞍山", "調景嶺"],
+    "將軍澳": ["將軍澳", "坑口", "寶琳", "調景嶺", "康城", "西貢"],
+    "葵涌":   ["葵涌", "荃灣", "青衣", "石籬", "安蔭"],
+    "青衣":   ["青衣", "葵涌", "荃灣"],
+    "離島":   ["東涌", "長洲", "坪洲", "愉景灣", "梅窩", "大澳", "南丫島"],
+    // 九龍
+    "旺角":   ["旺角", "油麻地", "太子", "佐敦", "大角咀"],
+    "油麻地": ["油麻地", "旺角", "佐敦", "柯士甸", "廟街"],
+    "佐敦":   ["佐敦", "油麻地", "尖沙咀", "旺角"],
+    "尖沙咀": ["尖沙咀", "佐敦", "柯士甸", "紅磡"],
+    "紅磡":   ["紅磡", "黃埔", "尖沙咀", "土瓜灣", "何文田"],
+    "何文田": ["何文田", "土瓜灣", "紅磡", "九龍塘"],
+    "九龍塘": ["九龍塘", "石硤尾", "何文田", "太子", "新蒲崗"],
+    "太子":   ["太子", "旺角", "深水埗", "九龍塘"],
+    "深水埗": ["深水埗", "長沙灣", "荔枝角", "石硤尾", "太子"],
+    "長沙灣": ["長沙灣", "深水埗", "荔枝角"],
+    "荔枝角": ["荔枝角", "長沙灣", "美孚", "石硤尾"],
+    "觀塘":   ["觀塘", "牛頭角", "藍田", "油塘", "秀茂坪"],
+    "牛頭角": ["牛頭角", "觀塘", "九龍灣", "新蒲崗"],
+    "九龍灣": ["九龍灣", "牛頭角", "新蒲崗", "彩虹"],
+    "新蒲崗": ["新蒲崗", "九龍灣", "牛頭角", "黃大仙", "啟德"],
+    "黃大仙": ["黃大仙", "鑽石山", "慈雲山", "新蒲崗", "樂富"],
+    "鑽石山": ["鑽石山", "黃大仙", "慈雲山", "彩虹", "啟德"],
+    "宋皇臺": ["鑽石山", "啟德", "土瓜灣", "九龍城", "啟德"],
+    "啟德": ["鑽石山", "新蒲崗", "宋皇臺"],
+    "九龍城": ["未知", "未知", "未知"],
+    // 港島
+    "中環":   ["中環", "金鐘", "上環", "半山", "蘭桂坊"],
+    "金鐘":   ["金鐘", "中環", "灣仔", "金鐘道"],
+    "灣仔":   ["灣仔", "銅鑼灣", "金鐘", "跑馬地", "大坑"],
+    "銅鑼灣":["銅鑼灣", "灣仔", "天后", "跑馬地", "大坑"],
+    "天后":   ["天后", "銅鑼灣", "北角"],
+    "北角":   ["北角", "炮台山", "天后", "鰂魚涌"],
+    "鰂魚涌":["鰂魚涌", "太古", "筲箕灣", "北角"],
+    "太古":   ["太古", "鰂魚涌", "西灣河"],
+    "西灣河": ["西灣河", "筲箕灣", "太古"],
+    "筲箕灣":["筲箕灣", "西灣河", "柴灣"],
+    "柴灣":   ["柴灣", "筲箕灣", "小西灣"],
+    "香港仔": ["香港仔", "黃竹坑", "鴨脷洲", "田灣"],
+    "黃竹坑": ["黃竹坑", "香港仔", "海洋公園"],
+    "赤柱":   ["赤柱", "淺水灣", "石澳", "大潭"],
+    "淺水灣": ["淺水灣", "深水灣", "赤柱"],
+    "深水灣": ["深水灣", "淺水灣"]
+    // ...可持續擴充
+  };
+
+
+  // ========== 先清除舊高亮和導航UI ==========
+  var classes = [
+    '.gpt-num-highlight',
+    '.gpt-area-highlight',
+    '.gpt-multikey-highlight'
+  ];
+  classes.forEach(function(cls){
+    document.querySelectorAll(cls).forEach(function(el){
+      var parent = el.parentNode;
+      parent.replaceChild(document.createTextNode(el.textContent), el);
+      parent.normalize();
+    });
+  });
+  var oldNav = document.getElementById("gpt-nav-ui");
+  if(oldNav) oldNav.remove();
+
+  // ========== 主功能選單 ==========
+  var mode = prompt(
+    "💩Welcome to Aliz no need issue💩\n" +
+    "請輸入數字：\n" +
+    "1 = 學費範圍💰\n" +
+    "2 = 多組關鍵字🔍\n" +
+    "3 = 鄰近地區📍\n" +
+    "其它 = 關閉❌"
+  );
+  if(!["1","2","3"].includes(mode)) return;
+
+  // ========== 取得所有文本節點 ==========
+  function getTextNodes(node){
+    var nodes = [];
+    if(node.nodeType === 3){
+      nodes.push(node);
+    } else if(node.nodeType === 1 && node.childNodes && !/^(script|style|textarea|input)$/i.test(node.tagName)){
+      for(var i=0; i<node.childNodes.length; i++)
+        nodes = nodes.concat(getTextNodes(node.childNodes[i]));
+    }
+    return nodes;
+  }
+  var textNodes = getTextNodes(document.body);
+  var highlights = [];
+  var infoText = "";
+
+  // ========== 1. 學費範圍 ==========
+  if(mode === "1"){
+    var min = parseFloat(prompt('請輸入最低學費（不建議搜尋個位數）：', '100'));
+    var max = parseFloat(prompt('請輸入最高學費：', '300'));
+    if(isNaN(min)||isNaN(max)||min>max) return alert('輸入無效');
+    var numberRegex = /\d+(\.\d+)?/g;
+    textNodes.forEach(function(node){
+      var text = node.nodeValue;
+      var match, lastIndex = 0, parent = node.parentNode, frag = document.createDocumentFragment();
+      numberRegex.lastIndex = 0;
+      var found = false;
+      while((match = numberRegex.exec(text)) !== null){
+        var num = parseFloat(match[0]);
+        if(num >= min && num <= max){
+          found = true;
+          frag.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+          var span = document.createElement('span');
+          span.textContent = match[0];
+          span.className = 'gpt-num-highlight';
+          span.style.background = 'yellow';
+          span.style.color = 'black';
+          span.style.fontWeight = 'bold';
+          frag.appendChild(span);
+          highlights.push(span);
+          lastIndex = match.index + match[0].length;
+        }
+      }
+      if(found){
+        frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+        parent.replaceChild(frag, node);
+      }
+    });
+    infoText = "數值範圍：" + min + " ~ " + max;
+  }
+
+
+  // ========== 2. 多組關鍵字 ==========
+  if(mode === "2"){
+    var input = prompt('請輸入關鍵字（可多個，用逗號或空格分隔）：\n例如：幼稚園,幼兒');
+    if(!input) return;
+    var keywords = input.split(/[,，\s]+/).map(function(s){return s.trim();}).filter(Boolean);
+    if(!keywords.length) return;
+    var regex = new RegExp(keywords.map(k=>k.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1")).join('|'), 'g');
+    textNodes.forEach(function(node){
+      var text = node.nodeValue;
+      var match, lastIndex = 0, parent = node.parentNode, frag = document.createDocumentFragment();
+      regex.lastIndex = 0;
+      var found = false;
+      while((match = regex.exec(text)) !== null){
+        found = true;
+        frag.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+        var span = document.createElement('span');
+        span.textContent = match[0];
+        span.className = 'gpt-multikey-highlight';
+        span.style.background = 'gold';
+        span.style.color = 'black';
+        span.style.fontWeight = 'bold';
+        frag.appendChild(span);
+        highlights.push(span);
+        lastIndex = match.index + match[0].length;
+      }
+      if(found){
+        frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+        parent.replaceChild(frag, node);
+      }
+    });
+    infoText = "多關鍵字：" + keywords.join(", ");
+  }
+
+  // ========== 3. 鄰近地區 ==========
+  if(mode === "3"){
+    var area = prompt('請輸入一個地區名稱（如：馬鞍山 / 新蒲崗 / 西灣河...）：');
+    if(!area) return;
+    area = area.trim();
+    var keywords = [];
+    var foundKey = null;
+    for(var key in nearbyMap){
+      if(key === area){
+        keywords = nearbyMap[key];
+        foundKey = key;
+        break;
+      }
+    }
+    if(!foundKey){
+      for(var key in nearbyMap){
+        if(nearbyMap[key].includes(area)){
+          keywords = nearbyMap[key];
+          foundKey = key;
+          break;
+        }
+      }
+    }
+    if(!foundKey){
+      alert('抱歉，未有此地區的鄰近地區資料，可聯絡開發者擴充！');
+      return;
+    }
+    var regex = new RegExp(keywords.map(function(k){
+      return k.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+    }).join('|'), 'g');
+    textNodes.forEach(function(node){
+      var text = node.nodeValue;
+      var match, lastIndex = 0, parent = node.parentNode, frag = document.createDocumentFragment();
+      regex.lastIndex = 0;
+      var found = false;
+      while((match = regex.exec(text)) !== null){
+        found = true;
+        frag.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+        var span = document.createElement('span');
+        span.textContent = match[0];
+        span.className = 'gpt-area-highlight';
+        span.style.background = 'lime';
+        span.style.color = 'black';
+        span.style.fontWeight = 'bold';
+        frag.appendChild(span);
+        highlights.push(span);
+        lastIndex = match.index + match[0].length;
+      }
+      if(found){
+        frag.appendChild(document.createTextNode(text.slice(lastIndex)));
+        parent.replaceChild(frag, node);
+      }
+    });
+    infoText = "地區：「" + area + "」及鄰近 (" + keywords.join('、') + ")";
+  }
+
+  // ========== 無結果 ==========
+  if(highlights.length === 0){
+    alert('找不到符合的結果！');
+    return;
+  }
+
+  // ========== 導航UI（右上角） ==========
+  var idx = 0;
+  function scrollToHighlight(i){
+    highlights.forEach(function(h){ h.style.outline = ''; });
+    highlights[i].scrollIntoView({behavior:'smooth',block:'center'});
+    highlights[i].style.outline = '2px solid orange';
+  }
+  scrollToHighlight(idx);
+
+  var navDiv = document.createElement('div');
+  navDiv.id = "gpt-nav-ui";
+  navDiv.style.position = 'fixed';
+  navDiv.style.top = '30px';
+  navDiv.style.right = '30px';
+  navDiv.style.left = '';
+  navDiv.style.bottom = '';
+  navDiv.style.background = 'rgba(255,255,200,0.97)';
+  navDiv.style.border = '1px solid #aaa';
+  navDiv.style.zIndex = 999999;
+  navDiv.style.padding = '8px 12px';
+  navDiv.style.borderRadius = '6px';
+  navDiv.style.boxShadow = '0 2px 8px #ccc';
+  navDiv.style.fontFamily = 'sans-serif';
+  navDiv.style.fontSize = '15px';
+  navDiv.innerHTML = `
+    <button id="gpt-prev">上一個</button>
+    <span id="gpt-counter">1 / ${highlights.length}</span>
+    <button id="gpt-next">下一個</button>
+    <button id="gpt-close" style="margin-left:10px;">關閉</button>
+    <span style="margin-left:10px;font-size:90%;color:#444;">${infoText}</span>
+  `;
+  document.body.appendChild(navDiv);
+  document.getElementById('gpt-prev').onclick = function(){
+    idx = (idx-1+highlights.length)%highlights.length;
+    scrollToHighlight(idx);
+    document.getElementById('gpt-counter').textContent = `${idx+1} / ${highlights.length}`;
+  };
+  document.getElementById('gpt-next').onclick = function(){
+    idx = (idx+1)%highlights.length;
+    scrollToHighlight(idx);
+    document.getElementById('gpt-counter').textContent = `${idx+1} / ${highlights.length}`;
+  };
+  document.getElementById('gpt-close').onclick = function(){
+    navDiv.remove();
+    highlights.forEach(function(h){
+      var parent = h.parentNode;
+      parent.replaceChild(document.createTextNode(h.textContent), h);
+      parent.normalize();
+    });
+  };
+})();">✨ 點我拖到書籤列</a>
+  <div class="tip">
+    <b>使用說明：</b>請直接把上面的藍色按鈕<strong>拖曳到瀏覽器的書籤列</strong>即可安裝。
+  </div>
+</body>
+</html>
