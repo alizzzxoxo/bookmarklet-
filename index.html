@@ -117,56 +117,65 @@
 <body>
   <div class="container">
       <!-- ★★★ 標題開始 ★★★ -->
-<!-- 字型載入，建議放 head -->
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" rel="stylesheet">
+<!-- 字型載入 -->
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 
 <h2 class="fancy-title">
-  <span class="fancy-gradient fancy-left">Aliz's</span>
+  <span class="fancy-pink-script">Aliz's</span>
   <span class="fancy-gradient">Bookmarklet</span>
 </h2>
 <style>
 .fancy-title {
-  font-family: 'DM Serif Display', 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', Arial, serif;
-  font-size: 2.6rem;
-  font-weight: 400;
+  font-size: 2.7rem;
+  font-weight: 700;
   text-align: center;
   letter-spacing: 0.08em;
   margin: 0 0 32px 0;
   line-height: 1.1;
   position: relative;
   z-index: 1;
-  /* 移除字體抗鋸齒模糊 */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
-.fancy-gradient {
-  background: linear-gradient(95deg, #2196f3 10%, #5ee0c6 55%, #f3adff 93%);
+.fancy-pink-script {
+  font-family: 'Dancing Script', 'Segoe Script', 'Comic Sans MS', cursive;
+  display: inline-block;
+  font-size: 1.16em;
+  font-weight: 700;
+  vertical-align: bottom;
+  background: linear-gradient(90deg, #ffb8e4 20%, #ffd1fa 50%, #b7e9ff 85%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  /* 精細發光，不要太強 */
-  text-shadow: 0 2px 10px #b8e9ff44, 0 0 1px #fff6;
-  position: relative;
+  text-shadow: 0 2px 10px #ffd6f877, 0 1px 6px #ffb8e433;
+  margin-right: 0.2em;
+  letter-spacing: 0.05em;
+  filter: brightness(1.08);
 }
-.fancy-left {
-  background: linear-gradient(90deg, #2196f3 10%, #5ee0c6 96%);
+.fancy-gradient {
+  font-family: 'DM Serif Display', 'Georgia', 'Times New Roman', serif;
+  background: linear-gradient(95deg, #b7e9ff 8%, #ffb8e4 55%, #ffd1fa 93%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow:
+    0 2px 10px #ffd6f844,
+    0 0 6px #b7e9ff33;
+  position: relative;
 }
 .fancy-gradient::after {
   content: "";
   display: block;
   position: absolute;
   left: 60%;
-  top: 40%;
+  top: 38%;
   width: 68px;
   height: 20px;
   pointer-events: none;
-  background: linear-gradient(120deg, #fff6 10%, #fff3 60%, transparent 100%);
-  opacity: 0.6;
+  background: linear-gradient(120deg, #fff9 10%, #fff7 60%, transparent 100%);
+  opacity: 0.5;
   filter: blur(4px);
-  transform: skewX(-25deg) scaleY(0.24);
+  transform: skewX(-25deg) scaleY(0.22);
   animation: move-glint 2.4s linear infinite;
 }
-.fancy-left::after { display: none !important; }
 @keyframes move-glint {
   0%   { left: 60%; opacity: 0; }
   8%   { left: 60%; opacity: 0.13;}
@@ -175,7 +184,7 @@
   100% { left: 110%;opacity: 0;}
 }
 @media (max-width:600px){
-  .fancy-title { font-size:2rem;}
+  .fancy-title { font-size:1.5rem;}
 }
 </style>
     <!-- ★★★ 標題完結 ★★★ -->
