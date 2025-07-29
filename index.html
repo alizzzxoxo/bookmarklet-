@@ -117,25 +117,24 @@
 <body>
   <div class="container">
       <!-- ★★★ 標題開始 ★★★ -->
+<!-- 加在 <head> 內，或直接放在 <body> 上方也可 -->
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+
 <h2 class="fancy-title">
-  <span class="fancy-glow">Aliz's</span>
+  <span class="fancy-gradient fancy-left">Aliz's</span>
   <span class="fancy-gradient">Bookmarklet</span>
 </h2>
 <style>
 .fancy-title {
+  font-family: 'Playfair Display', 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', Arial, serif;
   font-size: 2.6rem;
-  font-weight: 800;
+  font-weight: 700;
   text-align: center;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   margin: 0 0 32px 0;
   line-height: 1.1;
   position: relative;
   z-index: 1;
-}
-.fancy-glow {
-  color: #3ba6ee;
-  text-shadow: 0 0 8px #b2e4ff, 0 0 20px #1b759a55;
-  filter: brightness(1.08);
 }
 .fancy-gradient {
   background: linear-gradient(95deg, #2196f3 10%, #5ee0c6 45%, #f3adff 80%);
@@ -146,6 +145,9 @@
     0 2px 6px #fff7,
     0 0 6px #8be3e7a0;
   position: relative;
+}
+.fancy-left {
+  background: linear-gradient(95deg, #2196f3 5%, #5ee0c6 80%);
 }
 .fancy-gradient::after {
   content: "";
@@ -162,6 +164,9 @@
   transform: skewX(-25deg) scaleY(0.24);
   animation: move-glint 2.4s linear infinite;
 }
+.fancy-left::after {
+  display: none !important;
+}
 @keyframes move-glint {
   0%   { left: 60%; opacity: 0; }
   8%   { left: 60%; opacity: 0.13;}
@@ -171,9 +176,9 @@
 }
 @media (max-width:600px){
   .fancy-title { font-size:2rem;}
-}  
+}
 </style>
-          <!-- ★★★ 標題完結 ★★★ -->
+    <!-- ★★★ 標題完結 ★★★ -->
     <div class="explain">
       使用說明：<br>
       1. 請將下方任一藍色按鈕
