@@ -11,7 +11,7 @@
       padding: 24px 0;
     }
     .container {
-      max-width: 620px;
+      max-width: 650px;
       margin: auto;
       background: #fff;
       padding: 24px 32px 32px 32px;
@@ -24,52 +24,61 @@
       margin-bottom: 18px;
       line-height: 1.7;
     }
-.bm-row {
-  display: grid;
-  grid-template-columns: 220px 1fr; /* 左側固定欄寬，右側自動 */
-  align-items: center;
-  margin-bottom: 18px;
-  gap: 18px;
-}
-.bookmarklet-btn {
-  background: #2c88d9;
-  color: #fff;
-  border-radius: 6px;
-  padding: 10px 20px;
-  text-decoration: none;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  display: block;        /* 這裡強制 block，讓寬度固定 */
-  min-width: 0;
-  width: 100%;           /* 填滿 grid 欄寬 */
-  box-sizing: border-box;
-  text-align: left;
-  box-shadow: 0 2px 8px #2c88d922;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.bookmarklet-btn:hover { background: #175c9c; }
-.bm-desc {
-  font-size: 15px;
-  color: #444;
-  line-height: 1.4;
-  min-width: 0;
-  word-break: break-all;
-}
-
-@media (max-width: 600px) {
-  .bm-row {
-    grid-template-columns: 1fr;
-    gap: 6px;
-  }
-  .bookmarklet-btn {
-    width: 100%;
-    font-size: 15px;
-    padding: 8px 10px;
-    margin-bottom: 0;
-  }
-}
+    .bm-row {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      align-items: start;
+      gap: 18px 20px;
+      margin-bottom: 18px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed #e0e7ef;
+    }
+    .bm-row:last-child {
+      border-bottom: none;
+    }
+    .bookmarklet-btn {
+      background: #2c88d9;
+      color: #fff;
+      border-radius: 6px;
+      padding: 10px 16px;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      display: block;
+      cursor: pointer;
+      transition: background 0.2s;
+      min-width: 120px;
+      max-width: 160px;
+      text-align: center;
+      box-shadow: 0 2px 8px #2c88d922;
+      margin-bottom: 4px;
+    }
+    .bookmarklet-btn:hover { background: #175c9c; }
+    .bm-desc {
+      font-size: 15px;
+      color: #444;
+      line-height: 1.5;
+      margin-bottom: 3px;
+    }
+    .bm-ver {
+      font-size: 12px;
+      color: #888;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 14px 2vw; }
+      .bm-row {
+        grid-template-columns: 1fr;
+        gap: 6px 0;
+        margin-bottom: 18px;
+      }
+      .bookmarklet-btn {
+        min-width: 80px;
+        max-width: 100%;
+        font-size: 15px;
+        padding: 8px 0;
+      }
+    }
   </style>
 </head>
 <body>
@@ -80,22 +89,47 @@
       1. 請將下方任一藍色按鈕<strong>拖曳到你的瀏覽器書籤列</strong>，即可安裝。<br>
       2. 之後瀏覽任何頁面，只要點這個書籤，即可使用。
     </div>
+
     <div class="bm-row">
-      <a class="bookmarklet-btn" href="javascript:(function(){var s=document.createElement('script');s.src='https://alizzzxoxo.github.io/bookmarklet-/search.js';document.body.appendChild(s);})();">🔍 多功能搜尋</a>
-      <span class="bm-desc">在導師列的頁面使用，能同時搜尋不同條件的導師，會為你精準地搜尋符合條件的導師，及鄰近地區的導師。</span>
+      <div>
+        <a class="bookmarklet-btn" href="javascript:(function(){var s=document.createElement('script');s.src='https://alizzzxoxo.github.io/bookmarklet-/search.js';document.body.appendChild(s);})();">🔍 多功能搜尋</a>
+      </div>
+      <div>
+        <div class="bm-desc">在導師列的頁面使用，能同時搜尋不同條件的導師，會為你精準地搜尋符合條件的導師，及鄰近地區的導師。</div>
+        <div class="bm-ver">最新版本：2025年7月29日 更新</div>
+      </div>
     </div>
+
     <div class="bm-row">
-      <a class="bookmarklet-btn" href="javascript:(function(){var s=document.createElement('script');s.src='https://alizzzxoxo.github.io/bookmarklet-/sleekflow-auto.js';document.body.appendChild(s);})();">🤖 SleekFlow洗case回覆</a>
-      <span class="bm-desc">【測試階段】洗Case時，在Sleekflow對話視窗裡自動分析最後回覆的信息，根據最後的信息而自動輸入下一階段的回覆，如果今天有聯絡過的側會彈出提示。</span>
+      <div>
+        <a class="bookmarklet-btn" href="javascript:(function(){var s=document.createElement('script');s.src='https://alizzzxoxo.github.io/bookmarklet-/sleekflow-auto.js';document.body.appendChild(s);})();">🤖 SleekFlow洗case回覆</a>
+      </div>
+      <div>
+        <div class="bm-desc">【測試階段】洗Case時，在Sleekflow對話視窗裡自動分析最後回覆的信息，根據最後的信息而自動輸入下一階段的回覆，如果今天有聯絡過的側會彈出提示。</div>
+        <div class="bm-ver">最新版本：2025年7月29日 更新</div>
+      </div>
     </div>
+
     <div class="bm-row">
-      <a class="bookmarklet-btn" href="javascript:(function(){var s=document.createElement('script');s.src='https://alizzzxoxo.github.io/bookmarklet-/bluered.js';document.body.appendChild(s);})();">🔵🔴紅藍個案</a>
-      <span class="bm-desc">開啟「導師已回覆」或「沒有合適導師」的個案頁面後，一鍵複製Case客人點擊不合適的時間及原因 ／ 所有導師已回覆的狀況，方便跟進洗紅、藍色Case。</span>
+      <div>
+        <a class="bookmarklet-btn" href="javascript:(function(){var s=document.createElement('script');s.src='https://alizzzxoxo.github.io/bookmarklet-/bluered.js';document.body.appendChild(s);})();">🔵🔴紅藍個案</a>
+      </div>
+      <div>
+        <div class="bm-desc">開啟「導師已回覆」或「沒有合適導師」的個案頁面後，一鍵複製Case客人點擊不合適的時間及原因 ／ 所有導師已回覆的狀況，方便跟進洗紅、藍色Case。</div>
+        <div class="bm-ver">最新版本：2025年7月29日 更新</div>
+      </div>
     </div>
+
     <div class="bm-row">
-      <a class="bookmarklet-btn" href="javascript:(function(){var s=document.createElement('script');s.src='https://alizzzxoxo.github.io/bookmarklet-/case-highlight.js';document.body.appendChild(s);})();">✏️ 開新Case</a>
-      <span class="bm-desc">點擊書籤後輸入你最後開到的新Case number，點擊上一個會向上移動Highlight會提示你開到哪一個個案。點擊「電話」會複製個案電話，方便貼上Sleekflow跟進；點擊「個案編號」會自動複製Highlight的個案編號及其科目，直接生成Sleekflow名稱(例:T123456HW)。</span>
+      <div>
+        <a class="bookmarklet-btn" href="javascript:(function(){var s=document.createElement('script');s.src='https://alizzzxoxo.github.io/bookmarklet-/case-highlight.js';document.body.appendChild(s);})();">✏️ 開新Case</a>
+      </div>
+      <div>
+        <div class="bm-desc">點擊書籤後輸入你最後開到的新Case number，點擊上一個會向上移動Highlight會提示你開到哪一個個案。點擊「電話」會複製個案電話，方便貼上Sleekflow跟進；點擊「個案編號」會自動複製Highlight的個案編號及其科目，直接生成Sleekflow名稱(例:T123456HW)。</div>
+        <div class="bm-ver">最新版本：2025年7月29日 更新</div>
+      </div>
     </div>
+
   </div>
 </body>
 </html>
