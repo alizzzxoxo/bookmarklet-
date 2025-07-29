@@ -24,40 +24,52 @@
       margin-bottom: 18px;
       line-height: 1.7;
     }
-    .bm-row {
-      display: flex;
-      align-items: center;
-      margin-bottom: 16px;
-      gap: 16px;
-    }
-    .bookmarklet-btn {
-      background: #2c88d9;
-      color: #fff;
-      border-radius: 6px;
-      padding: 10px 20px;
-      text-decoration: none;
-      font-size: 16px;
-      font-weight: bold;
-      border: none;
-      display: inline-block;
-      cursor: pointer;
-      transition: background 0.2s;
-      min-width: 145px;
-      text-align: center;
-      box-shadow: 0 2px 8px #2c88d922;
-    }
-    .bookmarklet-btn:hover { background: #175c9c; }
-    .bm-desc {
-      font-size: 15px;
-      color: #444;
-      line-height: 1.4;
-      flex: 1;
-    }
-    @media (max-width: 600px) {
-      .container { padding: 14px 4vw; }
-      .bm-row { flex-direction: column; align-items: flex-start; gap: 6px;}
-      .bookmarklet-btn { min-width: 120px; font-size: 15px; padding: 8px 10px;}
-    }
+.bm-row {
+  display: grid;
+  grid-template-columns: 220px 1fr; /* 左側固定欄寬，右側自動 */
+  align-items: center;
+  margin-bottom: 18px;
+  gap: 18px;
+}
+.bookmarklet-btn {
+  background: #2c88d9;
+  color: #fff;
+  border-radius: 6px;
+  padding: 10px 20px;
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  display: block;        /* 這裡強制 block，讓寬度固定 */
+  min-width: 0;
+  width: 100%;           /* 填滿 grid 欄寬 */
+  box-sizing: border-box;
+  text-align: left;
+  box-shadow: 0 2px 8px #2c88d922;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.bookmarklet-btn:hover { background: #175c9c; }
+.bm-desc {
+  font-size: 15px;
+  color: #444;
+  line-height: 1.4;
+  min-width: 0;
+  word-break: break-all;
+}
+
+@media (max-width: 600px) {
+  .bm-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .bookmarklet-btn {
+    width: 100%;
+    font-size: 15px;
+    padding: 8px 10px;
+    margin-bottom: 0;
+  }
+}
   </style>
 </head>
 <body>
