@@ -116,7 +116,65 @@
 </head>
 <body>
   <div class="container">
-    <h2>Aliz's Bookmarklet</h2>
+      <!-- ★★★ 標題開始 ★★★ -->
+<h2 class="fancy-title">
+  <span class="fancy-glow">Aliz's</span>
+  <span class="fancy-gradient">Bookmarklet</span>
+</h2>
+<style>
+.fancy-title {
+  font-size: 2.6rem;
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: 0.12em;
+  margin: 0 0 32px 0;
+  line-height: 1.1;
+  position: relative;
+  z-index: 1;
+}
+.fancy-glow {
+  color: #3ba6ee;
+  text-shadow: 0 0 8px #b2e4ff, 0 0 20px #1b759a55;
+  filter: brightness(1.08);
+}
+.fancy-gradient {
+  background: linear-gradient(95deg, #2196f3 10%, #5ee0c6 45%, #f3adff 80%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow:
+    0 2px 6px #fff7,
+    0 0 6px #8be3e7a0;
+  position: relative;
+}
+.fancy-gradient::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 60%;
+  top: 40%;
+  width: 68px;
+  height: 20px;
+  pointer-events: none;
+  background: linear-gradient(120deg, #fff9 10%, #fff7 60%, transparent 100%);
+  opacity: 0.7;
+  filter: blur(4px);
+  transform: skewX(-25deg) scaleY(0.24);
+  animation: move-glint 2.4s linear infinite;
+}
+@keyframes move-glint {
+  0%   { left: 60%; opacity: 0; }
+  8%   { left: 60%; opacity: 0.13;}
+  18%  { left: 80%; opacity: 0.7;}
+  23%  { left: 110%;opacity: 0;}
+  100% { left: 110%;opacity: 0;}
+}
+@media (max-width:600px){
+  .fancy-title { font-size:2rem;}
+}
+      <!-- ★★★ 標題完結 ★★★ -->
+  
+</style>
     <div class="explain">
       使用說明：<br>
       1. 請將下方任一藍色按鈕
