@@ -117,8 +117,8 @@
 <body>
   <div class="container">
       <!-- ★★★ 標題開始 ★★★ -->
-<!-- 加在 <head> 內，或直接放在 <body> 上方也可 -->
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<!-- 字型載入，建議放 head -->
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap" rel="stylesheet">
 
 <h2 class="fancy-title">
   <span class="fancy-gradient fancy-left">Aliz's</span>
@@ -126,28 +126,30 @@
 </h2>
 <style>
 .fancy-title {
-  font-family: 'Playfair Display', 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', Arial, serif;
+  font-family: 'DM Serif Display', 'Segoe UI', 'PingFang TC', 'Microsoft JhengHei', Arial, serif;
   font-size: 2.6rem;
-  font-weight: 700;
+  font-weight: 400;
   text-align: center;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   margin: 0 0 32px 0;
   line-height: 1.1;
   position: relative;
   z-index: 1;
+  /* 移除字體抗鋸齒模糊 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 .fancy-gradient {
-  background: linear-gradient(95deg, #2196f3 10%, #5ee0c6 45%, #f3adff 80%);
+  background: linear-gradient(95deg, #2196f3 10%, #5ee0c6 55%, #f3adff 93%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow:
-    0 2px 6px #fff7,
-    0 0 6px #8be3e7a0;
+  /* 精細發光，不要太強 */
+  text-shadow: 0 2px 10px #b8e9ff44, 0 0 1px #fff6;
   position: relative;
 }
 .fancy-left {
-  background: linear-gradient(95deg, #2196f3 5%, #5ee0c6 80%);
+  background: linear-gradient(90deg, #2196f3 10%, #5ee0c6 96%);
 }
 .fancy-gradient::after {
   content: "";
@@ -158,15 +160,13 @@
   width: 68px;
   height: 20px;
   pointer-events: none;
-  background: linear-gradient(120deg, #fff9 10%, #fff7 60%, transparent 100%);
-  opacity: 0.7;
+  background: linear-gradient(120deg, #fff6 10%, #fff3 60%, transparent 100%);
+  opacity: 0.6;
   filter: blur(4px);
   transform: skewX(-25deg) scaleY(0.24);
   animation: move-glint 2.4s linear infinite;
 }
-.fancy-left::after {
-  display: none !important;
-}
+.fancy-left::after { display: none !important; }
 @keyframes move-glint {
   0%   { left: 60%; opacity: 0; }
   8%   { left: 60%; opacity: 0.13;}
