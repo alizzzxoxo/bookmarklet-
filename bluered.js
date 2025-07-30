@@ -12,19 +12,15 @@ if (root) {
       var cols = rows[ri].querySelectorAll('.col-4');
       for (var ci = 0; ci < cols.length; ci++) {
         var txt = cols[ci].innerText.trim();
-        // 抓導師編號
         var tutorId = (txt.match(/導師編號：(\d+)/) || [])[1] || '';
-        // 抓 "首堂時間:" 到下一個換行
         var firstLessonMatch = txt.match(/首堂時間:\s*([\s\S]*)/);
         var firstLessonBlock = firstLessonMatch ? firstLessonMatch[1].trim() : '';
         if (firstLessonBlock.indexOf('其他提問:') !== -1) {
           firstLessonBlock = firstLessonBlock.split('其他提問:')[0].trim();
         }
-        // 抓 其他提問
         var questionMatch = txt.match(/其他提問:\s*["“]?([\s\S]*?)["”]?(?:$|\n)/);
         var question = questionMatch ? questionMatch[1].replace(/\s+/g,' ').trim() : '';
         var showQuestion = !!question && !/^n[\/a\.]*$/i.test(question);
-        // 狀態判別
         if (/未回覆/.test(firstLessonBlock)) {
           results.push(
             (choiceLabels[ci]||'') + '導師編號：' + tutorId + '\n【未回覆時間】'
@@ -79,7 +75,6 @@ if (foundTutor) {
   return;
 }
 
-// ====== 「沒有合適導師」彈窗處理 ======
 var div = document.getElementById('student_sms_form_info');
 if (!div) {alert('找不到 student_sms_form_info 區塊'); return;}
 var spans = div.querySelectorAll('span');
@@ -99,7 +94,6 @@ if (!noTutorDate || !noTutorTime || !reasonText) {
   alert('找不到所需資訊');
   return;
 }
-// 抓個案編號
 var caseNum = '';
 var caseDiv = document.getElementById('case_detail');
 if (caseDiv) {
@@ -109,8 +103,6 @@ if (caseDiv) {
     caseNum = matchCase[1];
   }
 }
-
-// 格式化時間
 function formatTime(d, t) {
   var mm = d.split('-')[1].replace(/^0/,'');
   var dd = d.split('-')[2].replace(/^0/,'');
@@ -118,14 +110,11 @@ function formatTime(d, t) {
   return mm+'月'+dd+'日 '+hhmm;
 }
 var formattedTime = formatTime(noTutorDate, noTutorTime);
-
-// 原始複製內容
 var copyText = 
   (caseNum ? '[個案編號： '+caseNum+']\n':'') +
   "沒有合適導師【時間：" + noTutorDate + " , " + noTutorTime + "】\n不合適原因：【" + reasonText + "】";
 copyToClipboard(copyText, false);
 
-// === 只保留最終資訊 ===
 var onlyReason = reasonText.trim();
 var match = onlyReason.match(/^(其他|履歷不合)\s*-\s*(.+)$/);
 if (match) onlyReason = match[2].trim();
@@ -133,10 +122,8 @@ if (onlyReason.startsWith('心儀履歷')) onlyReason = onlyReason.replace(/^心
 if (onlyReason.includes('-')) onlyReason = onlyReason.split('-').slice(1).join('-').trim();
 if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace(/^不合適原因：/, '').trim();
 
-// ====== 彈窗UI ======
 (function(){
   document.querySelectorAll('#noTutorPopup').forEach(function(e){e.remove();});
-  // 主要判斷
   var reasonTip = "";
   if (/學費太高/.test(reasonText)) {
     reasonTip = "【提示】學費太高：按[更新]自動修改學費及提交";
@@ -174,13 +161,11 @@ if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace
   });
   document.body.appendChild(popup);
 
-  // 關閉
   function closePopup() {
     popup.remove();
   }
   document.getElementById('closeNoTutorPopup').onclick = closePopup;
 
-  // =========== 性別按鈕 ==========
   document.getElementById('btnGender').onclick = function(){
     var reason = document.getElementById('reasonText').textContent;
     var femaleKeywords = ["女導師","女補習老師","女老師","女生"];
@@ -211,7 +196,6 @@ if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace
     else alert('未處理性別，請手動操作。');
   };
 
-  // clickGenderBtn：避免重覆
   function clickGenderBtn(gender) {
     var reqInput = document.getElementById('requirements') || document.querySelector('input[name="requirements"]');
     var val = reqInput ? reqInput.value || '' : '';
@@ -241,7 +225,6 @@ if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace
     }
   }
 
-  // 編輯原因
   document.getElementById('btnEdit').onclick = function(){
     var old = document.getElementById('reasonText').textContent;
     var edited = prompt('請修改不合適原因：', old);
@@ -250,7 +233,6 @@ if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace
     }
   };
 
-  // =========== 更新原因 ===========
   document.getElementById('btnUpdate').onclick = function(){
     var reason = document.getElementById('reasonText').textContent.trim();
     if(!reason) { alert('原因不可為空'); return; }
@@ -262,26 +244,34 @@ if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace
         alert('找不到理想學費數字，請手動處理');
         return;
       }
-      var idealFee = feeMatch[1];
+      var idealFee = parseInt(feeMatch[1],10);
       var feeInput = document.querySelector('input[name="tutorial_fee"]');
       if(!feeInput){
         alert('找不到 tutorial_fee 輸入欄');
         return;
       }
-      var val = feeInput.value||"";
-      var arr = val.split(';').map(function(s){return s.trim();}).filter(Boolean);
-      // 如果已經有這個理想學費
-      if(arr.indexOf(idealFee)!==-1){
-        alert('理想學費 '+idealFee+' 已存在，未有更新');
-        return;
-      }
-      // 如果原本有內容，需合併並排序
-      if(arr.length>0){
-        arr.push(idealFee);
-        arr = Array.from(new Set(arr)).sort(function(a,b){return Number(a)-Number(b);});
-        feeInput.value = arr.join(';');
-      } else {
+      var val = feeInput.value.trim();
+      var arr = val.split(';').map(function(s){return parseInt(s.trim(),10);}).filter(function(n){return !isNaN(n);});
+      if(arr.length===0){
         feeInput.value = idealFee;
+      }else{
+        arr = arr.sort(function(a,b){return a-b;});
+        var min = arr[0], max = arr[arr.length-1];
+        // 若所有都比理想學費大（即min>idealFee）
+        if(min > idealFee){
+          feeInput.value = idealFee;
+        }
+        // 有一組等於理想學費
+        else if(arr.length===2 && min===idealFee){
+          alert('理想學費已包含於範圍，未有更新');
+          return;
+        }
+        // 有比理想學費小的
+        else{
+          var rangeArr = [min, idealFee];
+          rangeArr = Array.from(new Set(rangeArr)).sort(function(a,b){return a-b;});
+          feeInput.value = rangeArr.join(';');
+        }
       }
       feeInput.focus();
       var event = new KeyboardEvent('keydown', {key:'Enter', keyCode:13, which:13, bubbles:true});
@@ -296,7 +286,6 @@ if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace
       var input = document.querySelector('input[name="requirementOther"]');
       if(!input){ alert('找不到 requirementOther 輸入欄'); return; }
       var newContent = "【不接受視像】";
-      // 只要有「不接受視像」四字就不再加入
       if(input.value.indexOf("不接受視像")!==-1){
         alert('已存在「不接受視像」紀錄，未有更新');
         return;
@@ -313,7 +302,6 @@ if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace
       return;
     }
 
-    // 3/4. 履歷不合/其他
     var input = document.querySelector('input[name="requirementOther"]');
     if(!input){ alert('找不到 requirementOther 輸入欄'); return; }
     var newContent = reason;
@@ -332,7 +320,7 @@ if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace
     alert('已更新原因並提交');
   };
 })();
-  
+
 function copyToClipboard(text, alertOnSuccess) {
   if (navigator.clipboard && window.isSecureContext) {
     navigator.clipboard.writeText(text).then(function(){
