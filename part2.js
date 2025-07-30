@@ -10,11 +10,25 @@ function loadNearbyMap(cb){
 loadNearbyMap(main);
 
 function main(){
-  // ===== 網址判斷 =====
-  if(!/\/panel\/admin\/cases_approve\/completetutorlist_new\.php\?id=/.test(location.pathname + location.search)){
-  alert('只能在導師列表開啟此功能！');
-  return;
-}
+    // ===== 網址判斷+提示音 =====
+    if (!/\/panel\/admin\/cases_approve\/completetutorlist_new\.php\?id=/.test(location.pathname + location.search)) {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.type = "sine";
+        o.frequency.value = 880;
+        o.connect(g);
+        g.connect(ctx.destination);
+        g.gain.value = 0.13;
+        o.start();
+        g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.30);
+        o.stop(ctx.currentTime + 0.30);
+        setTimeout(()=>{ctx.close();},400);
+      } catch(e){}
+      alert('只能在導師列表開啟此功能！');
+      return;
+    }
 // ===== CSS =====
 const style = `
 #tc_tutor_filter_ui {
