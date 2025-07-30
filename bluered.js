@@ -130,7 +130,8 @@ if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace
   } else if (/不能面授|只接受面授|不接受視像/.test(reasonText)) {
     reasonTip = "【提示】不能面授：按[更新]自動填「不接受視像」及提交";
   } else {
-    reasonTip = "【提示】[更新]只會將原因填入要求，請自行檢查";
+    reasonTip = "💡提示💡【更新】按鈕會自動更新學費、不能面授的要求；";
+    reasonTip = "學歷、其他 請自行檢查或編輯後，再點擊【更新】";
   }
 
   var popup = document.createElement('div');
