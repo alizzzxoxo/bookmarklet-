@@ -1,19 +1,22 @@
 javascript:(function(){
-  // ==== 你可以在這裡自訂科目對應代號 ====
+  // === 支援多種別名/正則的規則，優先比對 ===
+  var subjectRules = [
+    { match: /^英文$|^English$|^English SL$|^English HL$/i, code: "E" },
+    { match: /^中文$|^Chinese$|^Chinese SL$|^Chinese HL$/i, code: "C" },
+    { match: /^數學$|^Mathematics$|^Math$|^Mathematics HL$|^Mathematics SL$/i, code: "M" },
+    { match: /^物理$|^Physics$|^Physics SL$|^Physics HL$/i, code: "P" },
+    { match: /^化學$|^Chemistry$|^Chemistry SL$|^Chemistry HL$/i, code: "Chem" },
+    { match: /^生物$|^Biology$|^Biology HL$|^Biology SL$/i, code: "Bio" },
+    // 你可在這裡添加更多正則規則
+  ];
+  // === 精確對應表 ===
   var subjectMap = {
-    "中文": "C",
-    "英文": "E",
-    "數學": "M",
     "功課": "HW",
     "全科": "A",
-    "物理": "P",
-    "化學": "Chem",
-    "生物": "Bio",
     "地理": "G",
     "經濟": "Ec",
+    "商業管理": "Bus",
     "會計": "Ac",
-    "M1": "M1",
-    "M2": "M2",
     "資訊及通訊科技": "ICT",
     "西史": "WHis",
     "中史": "CHis",
@@ -24,7 +27,10 @@ javascript:(function(){
     "升學面試課": "面試",
     "中國文學": "CL",
     "英國文學": "EL",
-    "日語": "JP"
+    "日語": "JP",
+    "公民與社會發展科": "公民",
+    "Further Mathematics": "FMaths",
+    "Pure Mathematics": "PMaths"
     // ...可自行添加
   };
 
@@ -75,7 +81,6 @@ javascript:(function(){
   document.head.appendChild(style);
 
   function highlightRowAndTds(row, tds) {
-    // 清除所有舊 highlight
     document.querySelectorAll('.case-row-highlight-bookmarklet').forEach(function(tr){
       tr.classList.remove('case-row-highlight-bookmarklet');
     });
@@ -89,18 +94,28 @@ javascript:(function(){
       for(var i=0; i<tds.length; i++){
         tds[i].classList.add('case-td-highlight-bookmarklet');
       }
-      // 滾動到可見
       tds[0]?.parentElement.scrollIntoView({behavior:'smooth', block:'center'});
     }
+  }
+
+  // 將科目名稱轉為代碼（rules > map > 原文）
+  function mapSubjectToCode(subjectName) {
+    // 比對 subjectRules（正則/多語）
+    for(var i=0;i<subjectRules.length;i++){
+      if(subjectRules[i].match.test(subjectName)) return subjectRules[i].code;
+    }
+    // 再查 subjectMap（精確）
+    if(subjectMap[subjectName]) return subjectMap[subjectName];
+    // 都沒中，用原字
+    return subjectName;
   }
 
   function showPopup(atIdx) {
     idx = atIdx;
     var c = cases[idx];
-    // 科目轉代號，組合格式T201966C&E&M
-    var codes = c.subject.split(/[,\s，]+/).map(function(s){
-      s = s.trim();
-      return subjectMap[s] || s;
+    // 只用中英文逗號分割，空白不拆
+    var codes = c.subject.split(/[,，]+/).map(function(s){
+      return mapSubjectToCode(s.trim());
     }).filter(Boolean);
     var caseCode = 'T'+c.caseId+(codes.length ? codes.join('&') : '');
 
@@ -136,14 +151,11 @@ javascript:(function(){
       boxShadow:'0 6px 32px #0003',
       minWidth:'320px'
     });
-    // 移除舊popup
     document.querySelectorAll('#case_popup_box').forEach(function(e){e.remove();});
     document.body.appendChild(popup);
 
-    // 高亮當前 row 及所有 td
     highlightRowAndTds(c.row, c.tds);
 
-    // 按鈕功能
     document.getElementById('pre_case').onclick = function(){
       if(idx>0) showPopup(idx-1);
     };
@@ -158,11 +170,10 @@ javascript:(function(){
     };
     document.getElementById('close_popup').onclick = function(){
       popup.remove();
-      highlightRowAndTds(); // 移除高亮
+      highlightRowAndTds();
     };
   }
 
-  // 複製到剪貼簿
   function copyToClipboard(text){
     if(navigator.clipboard && window.isSecureContext){
       navigator.clipboard.writeText(text);
