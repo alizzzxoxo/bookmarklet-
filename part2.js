@@ -16,7 +16,7 @@ const style = `
   position:fixed;top:54px;left:auto;right:24px;z-index:99999;
   background:#fff;border:2px solid #99c9ff;border-radius:14px;
   box-shadow:2px 2px 16px #0002;
-  min-width:320px;max-width:96vw;width:380px;
+  min-width:320px;max-width:96vw;width:380px;height:auto;
   padding:13px 15px 10px 15px;
   font-family:system-ui,sans-serif;font-size:15px;
   cursor:grab;user-select:none;
@@ -45,26 +45,68 @@ const style = `
   float:right;margin:0 0 0 7px;background:none;border:none;
   color:#ec5050;font-size:17px;font-weight:normal;cursor:pointer;
 }
+#tc_tutor_filter_ui .tc-label {
+  font-size:14px;color:#407fa6;
+  margin-bottom:3px;
+  font-weight:bold;
+}
 #tc_tutor_filter_ui textarea {
-  width:100%;min-height:80px;max-height:300px;height:auto;overflow:auto;
-  font-size:15px;margin-top:7px;margin-bottom:2px;
+  width:100%;min-height:220px;max-height:420px;height:220px;overflow:auto;
+  font-size:15px;margin-top:3px;margin-bottom:2px;
   border-radius:5px;border:1.2px solid #b8e0ff;
   padding:6px 8px;background:#fafdff;
   resize:vertical;box-sizing:border-box;line-height:1.5;
   display:block;
 }
-#tc_tutor_filter_ui .tc-row .tc-label {font-size:14px;color:#407fa6;}
-#tc_tutor_filter_ui .tc-row .tc-desc {font-size:12px;color:#aaa;}
 #tc_tutor_filter_ui .tc-taginput {
-  border:1.1px solid #b8e0ff;border-radius:5px;padding:3px 7px;font-size:15px;margin-top:4px;width:96%;
-  margin-bottom:2px;
+  border:1.1px solid #b8e0ff;border-radius:5px;padding:3px 7px;font-size:15px;margin-top:6px;margin-bottom:2px;width:96%;
+  display:block;
+  background:#fffbe6;
 }
 #tc_tutor_filter_ui .tc-none {margin-top:9px;color:#999;font-size:14px;}
+.tc-tutor-reason-box {
+  display:flex !important; align-items:center; justify-content:center;
+  min-height:0; min-width:0; width:100%;
+  background:transparent !important; border:none !important; box-shadow:none !important;
+  padding:0 !important; margin:12px auto 12px auto !important;
+  transition:max-height .25s cubic-bezier(.85,0,.15,1), opacity .22s;
+  opacity:1; max-height:200px; overflow:visible;
+}
 .tc-tutor-reason {
-  background:#fff1f1;color:#c44;font-size:13px;
-  border-radius:6px;padding:4px 8px 2px 10px;margin-bottom:2px;
-  margin-left:2px;margin-right:2px;display:inline-block;
-  border:1px solid #ffbebe;
+  background:#fff2f2;
+  color:#c33;font-size:17px;line-height:1.7;
+  border-radius:12px;padding:18px 20px 16px 20px;
+  margin:0 auto;display:block;max-width:95vw;min-width:0;width:100%;
+  border:2px solid #ffbebe;
+  font-weight:bold;
+  cursor:pointer;
+  box-shadow:0 2px 14px #ffcaca4d;
+  transition:box-shadow .2s,background .2s,transform .25s;
+  text-align:center;
+  word-break:break-word;white-space:pre-line;
+  letter-spacing:0.5px;
+  min-height:36px;
+  z-index:2;
+  opacity:1;
+  user-select: text;
+}
+.tc-tutor-reason:hover {background:#ffe5e5;box-shadow:0 2px 24px #ff8d8d44; }
+.tc-tutor-card-collapsed {
+  display:block !important; max-height:0 !important; overflow:hidden !important; opacity:0 !important; padding:0 !important; margin:0 !important; border:none !important; box-shadow:none !important;
+  pointer-events:none !important;
+  transition:max-height .25s cubic-bezier(.85,0,.15,1), opacity .22s;
+}
+.tc-tutor-card-expanded {
+  display:block !important; opacity:1 !important; max-height:4000px !important; transition:max-height .25s cubic-bezier(.85,0,.15,1), opacity .22s;
+}
+.tc-highlight {
+  background: #ffe066 !important;
+  color: #c65000 !important;
+  font-weight: bold;
+  border-radius: 4px;
+  padding: 1px 3px;
+  box-shadow: 0 0 0 1px #ffdf80;
+  /* animation: highlightfade 2s; */
 }
 `;
 if(!document.getElementById("tc_tutor_filter_ui_style")) {
@@ -81,7 +123,7 @@ box.id = "tc_tutor_filter_ui";
 box.innerHTML = `
   <button class="tc-btn tc-close" title="關閉浮窗" style="float:right;">✕</button>
   <div class="tc-row">
-    <div class="tc-label">【將複製的個案資料貼這裡】<br><span style="color:#888;font-size:13px">格式：<br>[個案編號： ]<br>科⽬： <br>學費：<br>地點： <br>詳細地址：<br>交通⽅法： <br>堂數／時間：<br>每堂時間: <br>特別要求：</span></div>
+    <div class="tc-label">【視窗拖拉可移動位置】</div>
     <textarea id="tc_case_input" placeholder="【將複製的個案資料貼這裡】
 格式：
 [個案編號： ]
@@ -98,16 +140,25 @@ box.innerHTML = `
   <div class="tc-row" id="tc_filter_box" style="display:none;">
     <div class="tc-label">篩選條件：</div>
     <div class="tc-tags" id="tc_tags"></div>
-    <input type="text" id="tc_special_input" class="tc-taginput" style="display:none;" placeholder="請輸入特殊關鍵字(如SEN/指定學校)"/>
+    <input type="text" id="tc_special_input" class="tc-taginput" style="display:none;" placeholder="請輸入關鍵字，Enter送出（多詞用半形逗號,分隔）">
   </div>
   <div class="tc-row" id="tc_none" style="display:none;">
     <div class="tc-none">沒有符合條件的導師。</div>
   </div>
 `;
 document.body.appendChild(box);
-box.querySelector(".tc-close").onclick=()=>box.remove();
 
-// ===== 浮窗可上下左右拖曳且尺寸固定 =====
+box.querySelector(".tc-close").onclick=function(){
+  document.querySelectorAll('.tc-tutor-reason-box').forEach(div=>div.remove());
+  document.querySelectorAll('.mb-3.btn.btn-light.sentence').forEach(node=>{
+    node.classList.remove('tc-tutor-card-collapsed');
+    node.classList.remove('tc-tutor-card-expanded');
+    node.style.display="";
+    // 清除高亮
+    removeHighlights(node);
+  });
+  box.remove();
+};
 (function dragElement(el){
   let pos1=0,pos2=0,pos3=0,pos4=0,dragging=false;
   el.onmousedown=dragMouseDown;
@@ -142,12 +193,6 @@ box.querySelector(".tc-close").onclick=()=>box.remove();
   }
 })(box);
 
-// ===== 自動調textarea高度 =====
-box.querySelector("#tc_case_input").addEventListener("input", function(){
-  this.style.height = "auto";
-  this.style.height = Math.min(this.scrollHeight,300)+"px";
-});
-
 // ===== 狀態 =====
 const TAGS = [
   { key: "fee", label: "學費", desc: "導師價格不高於個案最高學費" },
@@ -163,7 +208,7 @@ const TAGS = [
 
 let filterState = {
   fee:true, area:true, gender:false, grade:false, verified:false, fresh:true, exp:false, special:false, bad:true,
-  feeRange:null, genderVal:null, gradeVal:null, verifiedVal:null, expVal:null, specialVal:null,
+  feeRange:null, genderVal:null, gradeVal:null, verifiedVal:null, expVal:null, specialVal:[], // now array
   areaVal:null, caseData:null, tutorData:[]
 };
 
@@ -194,11 +239,9 @@ function showMsg(msg, ms){
 // ===== 工具 =====
 function toNum(str){return parseInt((str+"").replace(/[^\d]/g,""))||0;}
 function parseFee(str){
-  // 精確抓取個案最高學費（最後一個數字就是最高）
   if(!str) return null;
   let m = str.match(/學費[:：]?\s*\$?[\s]*(\d+)(?:\s*-\s*(\d+))?/);
   if(m) return m[2] ? [parseInt(m[1]), parseInt(m[2])] : [parseInt(m[1]), parseInt(m[1])];
-  // 或直接抓所有數字，最高者為max
   let nums = (str.match(/\d+/g)||[]).map(Number);
   if(nums.length==1) return [nums[0],nums[0]];
   if(nums.length>=2) return [Math.min(...nums),Math.max(...nums)];
@@ -243,9 +286,47 @@ function parseSpecial(str){
   if(m) return m[1];
   return null;
 }
+function removeHighlights(node){
+  // 移除高亮
+  node.querySelectorAll && node.querySelectorAll('.tc-highlight').forEach(span=>{
+    let parent = span.parentNode;
+    parent.replaceChild(document.createTextNode(span.textContent), span);
+    parent.normalize && parent.normalize();
+  });
+}
+function highlightKeywords(node, kws){
+  removeHighlights(node);
+  if(!kws || !kws.length) return;
+  // 只針對自我介紹欄（通常是 .col-12.text-left/類似），也可以加強到整個卡片
+  let introBox = null;
+  let introArr = Array.from(node.querySelectorAll('.col-12.text-left'));
+  if(introArr.length){
+    introArr.forEach(box=>{
+      let html = box.innerHTML;
+      let found=false;
+      kws.forEach(kw=>{
+        if(!kw) return;
+        // 支持特殊字元
+        let safeKW = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        let reg = new RegExp("("+safeKW+")","ig");
+        if(reg.test(html)){
+          found=true;
+          html = html.replace(reg, '<span class="tc-highlight">$1</span>');
+        }
+      });
+      if(found) box.innerHTML=html;
+    });
+  }
+}
+
 // ====== 個案分析 ======
 function analyzeCase(txt){
   let lines = txt.replace(/\r/g,"").split('\n').map(v=>v.trim()).filter(v=>v.length>0);
+  // 自動去除多餘客服提示
+  let fullText = lines.join('\n');
+  fullText = fullText.replace(/你好！多謝你使用Tutor Circle尋補服務呀，?\s*請問以上資料正確嗎？如無問題，這邊正為您聯繫導師😊如資料後續有需要修改的地方，或有需要聯繫之導師編號，請直接留言告知我就可以了，無須再次填寫表格以免影響處理流程😉/g, '');
+  lines = fullText.split('\n').map(v=>v.trim()).filter(v=>v.length>0);
+
   let data = {fee:null, area:null, gender:null, grade:[], verified:null, fresh:null, exp:null, special:null};
   lines.forEach(line=>{
     if(!data.fee && /學費/.test(line)){
@@ -332,24 +413,19 @@ function areaMatch(tutArea,caseArea){
 // ====== 條件判斷 ======
 function tutorFilter(tut, state){
   let reasons = [];
-  // 學費
   if(state.fee && state.feeRange && tut.fee!==null){
     if(tut.fee > state.feeRange[1]) reasons.push("學費不符");
   }
-  // 地點
   if(state.area && state.caseData.area && tut.area){
     if(!areaMatch(tut.area,state.caseData.area)) reasons.push("地點不符");
   }
-  // 性別
   if(state.gender && state.genderVal && tut.gender){
     if(!tut.gender.includes(state.genderVal)) reasons.push("性別不符");
   }
-  // 成績
   if(state.grade && state.caseData.grade && tut.subjGrades){
     let ok=false;
     for(let need of state.caseData.grade){
       let targetGrades=expandGrades(need.grade,need.above);
-      // 若有科目需求
       if(need.subj){
         for(let sg of tut.subjGrades){
           if(sg.subj && sg.subj.includes(need.subj.replace(/英文/,"英").replace(/中文/,"中"))) {
@@ -364,19 +440,20 @@ function tutorFilter(tut, state){
     }
     if(!ok) reasons.push("成績不符");
   }
-  // 驗證
   if(state.verified){
     if(tut.verified!==true) reasons.push("未驗證");
   }
-  // 應屆
   if(state.fresh && tut.fresh) reasons.push("應屆考生");
-  // 有經驗
   if(state.exp && tut.exp!==true) reasons.push("無經驗");
-  // 特殊
-  if(state.special && state.specialVal && tut.intro){
-    if(!tut.intro.toLowerCase().includes(state.specialVal.toLowerCase())) reasons.push("無特殊關鍵字");
+  // 關鍵字
+  if(state.special && Array.isArray(state.specialVal) && state.specialVal.length){
+    let matched=false;
+    let intro = tut.intro ? tut.intro.toLowerCase() : "";
+    for(let kw of state.specialVal){
+      if(kw && intro.includes(kw)) { matched=true; break; }
+    }
+    if(!matched) reasons.push("無特殊關鍵字");
   }
-  // 差評
   if(state.bad && tut.bad) reasons.push("差評導師");
   tut.reasons = reasons;
   return reasons.length===0;
@@ -395,35 +472,67 @@ function updateTagUI(){
     else btn.classList.add("tc-off");
     btn.onclick = function(){
       filterState[tag.key] = !filterState[tag.key];
+      if(tag.key==="special"){
+        let inp=box.querySelector("#tc_special_input");
+        inp.style.display=filterState.special?"block":"none";
+        if(filterState.special) inp.focus();
+      }
       renderTutors();
       updateTagUI();
       showMsg("["+tag.label+"]篩選已"+(filterState[tag.key]?"開啟":"關閉"));
     };
     tagbox.appendChild(btn);
   });
+  let inp=box.querySelector("#tc_special_input");
+  inp.style.display=filterState.special?"block":"none";
 }
 
 // ====== 導師顯示 ======
 function renderTutors(){
-  let showCount=0;
+  document.querySelectorAll('.tc-tutor-reason-box').forEach(div=>div.remove());
   filterState.tutorData.forEach(tut=>{
     let show = tutorFilter(tut, filterState);
-    let oldr = tut.node.querySelector('.tc-tutor-reason');
-    if(oldr) oldr.remove();
+    let node = tut.node;
+    node.classList.remove('tc-tutor-card-collapsed','tc-tutor-card-expanded');
+    node.style.display="";
+    removeHighlights(node);
     if(show){
-      tut.node.style.display = "";
-      showCount++;
-    }else{
-      tut.node.style.display = "none";
-      if(tut.reasons.length){
-        let reasonDiv = document.createElement('div');
-        reasonDiv.className = "tc-tutor-reason";
-        reasonDiv.textContent = "不顯示原因：" + tut.reasons.join("，");
-        tut.node.insertBefore(reasonDiv, tut.node.firstChild);
-        tut.node.style.display = "";
+      node.style.display = "";
+      // 高亮（如果有關鍵字）
+      if(filterState.special && Array.isArray(filterState.specialVal) && filterState.specialVal.length){
+        highlightKeywords(node, filterState.specialVal);
       }
+    }else{
+      node.style.display = "none";
+      let reasonDiv = document.createElement('div');
+      reasonDiv.className = "tc-tutor-reason-box";
+      let reasonCont = document.createElement('div');
+      reasonCont.className = "tc-tutor-reason";
+      reasonCont.textContent = "不顯示原因：" + tut.reasons.join("，") + "\n（點擊可展開/收起導師卡片）";
+      reasonDiv.appendChild(reasonCont);
+      if(node.parentNode) node.parentNode.insertBefore(reasonDiv, node);
+      let expanded = false;
+      reasonCont.onclick=function(e){
+        expanded = !expanded;
+        if(expanded){
+          node.style.display="";
+          node.classList.remove('tc-tutor-card-collapsed');
+          node.classList.add('tc-tutor-card-expanded');
+          // 高亮
+          if(filterState.special && Array.isArray(filterState.specialVal) && filterState.specialVal.length){
+            highlightKeywords(node, filterState.specialVal);
+          }
+        }else{
+          node.classList.remove('tc-tutor-card-expanded');
+          node.classList.add('tc-tutor-card-collapsed');
+          setTimeout(()=>{node.style.display="none";},220);
+        }
+      };
+      node.classList.remove('tc-tutor-card-expanded');
+      node.classList.add('tc-tutor-card-collapsed');
     }
   });
+  let showCount=filterState.tutorData.filter(tut=>tutorFilter(tut,filterState)).length;
   box.querySelector("#tc_none").style.display = showCount? "none":"block";
 }
 
@@ -438,7 +547,7 @@ box.querySelector("#tc_submit").onclick=function(){
   filterState.gradeVal = c.grade;
   filterState.verifiedVal = c.verified;
   filterState.expVal = c.exp;
-  filterState.specialVal = c.special;
+  filterState.specialVal = [];
   filterState.areaVal = c.area;
   filterState.fee = !!c.fee;
   filterState.area = !!c.area;
@@ -453,13 +562,26 @@ box.querySelector("#tc_submit").onclick=function(){
   filterState.tutorData = parseTutorList();
   updateTagUI();
   renderTutors();
+  setTimeout(()=>{let t=box.querySelector("#tc_case_input");t.style.height="auto";t.style.height=Math.min(t.scrollHeight,420)+"px";},300);
   showMsg("已自動篩選導師，點擊按鈕可切換條件！");
-  setTimeout(()=>{let t=box.querySelector("#tc_case_input");t.style.height="auto";t.style.height=Math.min(t.scrollHeight,300)+"px";},300);
 };
-// ====== 特殊要求輸入 ======
-box.querySelector("#tc_special_input").oninput = function(){
-  filterState.specialVal = this.value.trim();
-  renderTutors();
+// ====== 特殊要求輸入（Enter才觸發，支持多關鍵字,自動去除逗號兩側空白）=====
+const specialInput = box.querySelector("#tc_special_input");
+specialInput.onkeydown = function(e){
+  if(e.key==="Enter"){
+    e.preventDefault();
+    let val = this.value.trim();
+    // 以逗號分隔，去除兩側空白但中間空白保留
+    let arr = val.split(",").map(v=>v.replace(/^\s+|\s+$/g,"").toLowerCase()).filter(Boolean);
+    filterState.specialVal = arr;
+    renderTutors();
+    if(arr.length){
+      showMsg("已搜尋關鍵字");
+    }
+  }
 };
+// 禁止input自動觸發搜尋，必須按Enter
+specialInput.oninput = function(e){};
+// ====== END =====
 }
 })();
