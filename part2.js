@@ -46,7 +46,8 @@ const style = `
   color:#ec5050;font-size:17px;font-weight:normal;cursor:pointer;
 }
 #tc_tutor_filter_ui .tc-label {
-  font-size:14px;color:#407fa6;
+  font-size:16px;
+  color:#407fa6;
   margin-bottom:3px;
   font-weight:bold;
 }
@@ -124,9 +125,8 @@ box.innerHTML = `
   <button class="tc-btn tc-close" title="關閉浮窗" style="float:right;">✕</button>
   <div class="tc-row">
     <div class="tc-label">【視窗拖拉可移動位置】</div>
-    <textarea id="tc_case_input" placeholder="【將複製的個案資料貼這裡】
-格式：
-[個案編號： ]
+    <textarea id="tc_case_input" placeholder="
+個案編號： 
 科⽬： 
 學費：
 地點： 
@@ -140,7 +140,7 @@ box.innerHTML = `
   <div class="tc-row" id="tc_filter_box" style="display:none;">
     <div class="tc-label">篩選條件：</div>
     <div class="tc-tags" id="tc_tags"></div>
-    <input type="text" id="tc_special_input" class="tc-taginput" style="display:none;" placeholder="請輸入關鍵字，Enter送出（多詞用半形逗號,分隔）">
+    <input type="text" id="tc_special_input" class="tc-taginput" style="display:none;" placeholder="輸入關鍵字後Enter（多詞以半形逗號,分隔）">
   </div>
   <div class="tc-row" id="tc_none" style="display:none;">
     <div class="tc-none">沒有符合條件的導師。</div>
