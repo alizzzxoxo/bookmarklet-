@@ -75,6 +75,7 @@ if (foundTutor) {
   return;
 }
 
+// ====== 「沒有合適導師」彈窗處理 ======
 var div = document.getElementById('student_sms_form_info');
 if (!div) {alert('找不到 student_sms_form_info 區塊'); return;}
 var spans = div.querySelectorAll('span');
@@ -94,6 +95,7 @@ if (!noTutorDate || !noTutorTime || !reasonText) {
   alert('找不到所需資訊');
   return;
 }
+// 抓個案編號
 var caseNum = '';
 var caseDiv = document.getElementById('case_detail');
 if (caseDiv) {
@@ -103,6 +105,7 @@ if (caseDiv) {
     caseNum = matchCase[1];
   }
 }
+// 格式化時間
 function formatTime(d, t) {
   var mm = d.split('-')[1].replace(/^0/,'');
   var dd = d.split('-')[2].replace(/^0/,'');
@@ -110,11 +113,13 @@ function formatTime(d, t) {
   return mm+'月'+dd+'日 '+hhmm;
 }
 var formattedTime = formatTime(noTutorDate, noTutorTime);
+// 原始複製內容
 var copyText = 
   (caseNum ? '[個案編號： '+caseNum+']\n':'') +
   "沒有合適導師【時間：" + noTutorDate + " , " + noTutorTime + "】\n不合適原因：【" + reasonText + "】";
 copyToClipboard(copyText, false);
 
+// ====== 只保留最終資訊 ======
 var onlyReason = reasonText.trim();
 var match = onlyReason.match(/^(其他|履歷不合)\s*-\s*(.+)$/);
 if (match) onlyReason = match[2].trim();
@@ -122,16 +127,11 @@ if (onlyReason.startsWith('心儀履歷')) onlyReason = onlyReason.replace(/^心
 if (onlyReason.includes('-')) onlyReason = onlyReason.split('-').slice(1).join('-').trim();
 if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace(/^不合適原因：/, '').trim();
 
+// ====== 彈窗UI ======
 (function(){
   document.querySelectorAll('#noTutorPopup').forEach(function(e){e.remove();});
-  var reasonTip = "";
-  if (/學費太高/.test(reasonText)) {
-    reasonTip = "【提示】學費太高：按[更新]自動修改學費及提交";
-  } else if (/不能面授|只接受面授|不接受視像/.test(reasonText)) {
-    reasonTip = "【提示】不能面授：按[更新]自動填「不接受視像」及提交";
-  } else {
-    reasonTip = "💡提示💡【更新】按鈕會自動更新學費、不能面授的要求<br>學歷、其他 請自行檢查或編輯後，再點擊【更新】";
-  }
+  // 只顯示這一句提示
+  var reasonTip = "💡提示💡【更新】按鈕會自動更新學費、不能面授的要求<br>學歷、其他 請自行檢查或編輯後，再點擊【更新】";
 
   var popup = document.createElement('div');
   popup.id = 'noTutorPopup';
@@ -256,17 +256,14 @@ if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace
         feeInput.value = idealFee;
       }else{
         arr = arr.sort(function(a,b){return a-b;});
-        var min = arr[0], max = arr[arr.length-1];
-        // 若所有都比理想學費大（即min>idealFee）
+        var min = arr[0];
         if(min > idealFee){
           feeInput.value = idealFee;
         }
-        // 有一組等於理想學費
         else if(arr.length===2 && min===idealFee){
           alert('理想學費已包含於範圍，未有更新');
           return;
         }
-        // 有比理想學費小的
         else{
           var rangeArr = [min, idealFee];
           rangeArr = Array.from(new Set(rangeArr)).sort(function(a,b){return a-b;});
