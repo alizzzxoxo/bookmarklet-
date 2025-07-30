@@ -125,8 +125,7 @@ box.innerHTML = `
   <button class="tc-btn tc-close" title="關閉浮窗" style="float:right;">✕</button>
   <div class="tc-row">
     <div class="tc-label">【視窗拖拉可移動位置】</div>
-    <textarea id="tc_case_input" placeholder="
-個案編號： 
+    <textarea id="tc_case_input" placeholder="個案編號： 
 科⽬： 
 學費：
 地點： 
