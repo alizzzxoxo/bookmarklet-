@@ -46,7 +46,7 @@ const style = `
   color:#ec5050;font-size:17px;font-weight:normal;cursor:pointer;
 }
 #tc_tutor_filter_ui .tc-label {
-  font-size:16px;
+  font-size:18px;
   color:#407fa6;
   margin-bottom:3px;
   font-weight:bold;
