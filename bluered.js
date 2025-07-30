@@ -125,9 +125,12 @@ var copyText =
   "沒有合適導師【時間：" + noTutorDate + " , " + noTutorTime + "】\n不合適原因：【" + reasonText + "】";
 copyToClipboard(copyText, false);
 
-// 只挑「原因」內容（如有「-」則只要後面部份）
+// ========== 處理 onlyReason：去除「其他 - 」「履歷不合 - 」等前綴 ==========
 var onlyReason = reasonText;
-if (onlyReason.includes('-')) {
+var match = onlyReason.match(/^(其他|履歷不合)\s*-\s*(.+)$/);
+if (match) {
+  onlyReason = match[2].trim();
+} else if (onlyReason.includes('-')) {
   onlyReason = onlyReason.split('-').slice(1).join('-').trim();
 }
 if (onlyReason.startsWith('不合適原因：')) {
@@ -297,8 +300,8 @@ if (onlyReason.startsWith('不合適原因：')) {
       var input = document.querySelector('input[name="requirementOther"]');
       if(!input){ alert('找不到 requirementOther 輸入欄'); return; }
       var newContent = "【不接受視像】";
-      // 若已經有「不接受視像」就不加
-      if(input.value.indexOf(newContent)!==-1){
+      // 只要有「不接受視像」四字就不再加入
+      if(input.value.indexOf("不接受視像")!==-1){
         alert('已存在「不接受視像」紀錄，未有更新');
         return;
       }
@@ -310,7 +313,7 @@ if (onlyReason.startsWith('不合適原因：')) {
       var event2 = new KeyboardEvent('keydown', {key:'Enter', keyCode:13, which:13, bubbles:true});
       input.dispatchEvent(event2);
       input.blur();
-      alert('已自動填寫「不接受視像」並提交');
+      alert('已自動填寫「【不接受視像】」並提交');
       return;
     }
 
