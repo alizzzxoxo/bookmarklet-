@@ -10,6 +10,11 @@ function loadNearbyMap(cb){
 loadNearbyMap(main);
 
 function main(){
+  // ===== 網址判斷 =====
+  if(!/\/panel\/admin\/cases_approve\/completetutorlist_new\.php\?id=/.test(location.pathname + location.search)){
+  alert('只能在導師列表開啟此功能！');
+  return;
+}
 // ===== CSS =====
 const style = `
 #tc_tutor_filter_ui {
