@@ -125,17 +125,13 @@ var copyText =
   "沒有合適導師【時間：" + noTutorDate + " , " + noTutorTime + "】\n不合適原因：【" + reasonText + "】";
 copyToClipboard(copyText, false);
 
-// ========== 處理 onlyReason：去除「其他 - 」「履歷不合 - 」等前綴 ==========
-var onlyReason = reasonText;
+// === 只保留最終資訊 ===
+var onlyReason = reasonText.trim();
 var match = onlyReason.match(/^(其他|履歷不合)\s*-\s*(.+)$/);
-if (match) {
-  onlyReason = match[2].trim();
-} else if (onlyReason.includes('-')) {
-  onlyReason = onlyReason.split('-').slice(1).join('-').trim();
-}
-if (onlyReason.startsWith('不合適原因：')) {
-  onlyReason = onlyReason.replace(/^不合適原因：/, '').trim();
-}
+if (match) onlyReason = match[2].trim();
+if (onlyReason.startsWith('心儀履歷')) onlyReason = onlyReason.replace(/^心儀履歷\s*/,'');
+if (onlyReason.includes('-')) onlyReason = onlyReason.split('-').slice(1).join('-').trim();
+if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace(/^不合適原因：/, '').trim();
 
 // ====== 彈窗UI ======
 (function(){
