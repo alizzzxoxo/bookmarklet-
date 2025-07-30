@@ -140,7 +140,7 @@ if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace
     + (caseNum ? 'CaseID: <b>'+caseNum+'</b><br>' : '')
     + '時間：<b>'+formattedTime+'</b><br>'
     + '原因：<span id="reasonText">'+onlyReason+'</span><br>'
-    + '<span style="color:#888;font-size:10px;">'+reasonTip+'</span>'
+    + '<span style="color:#888;font-size:11px;">'+reasonTip+'</span>'
     + '</div>'
     + '<button id="btnGender" style="margin-right:10px;">性別</button>'
     + '<button id="btnEdit" style="margin-right:10px;">編輯原因</button>'
