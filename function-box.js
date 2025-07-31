@@ -9,12 +9,49 @@ javascript:(function(){
   document.body.appendChild(host);
   var root = host.attachShadow({mode:'open'});
 
+  // 工具函數：動態載入js檔
+  function loadScriptOnce(url){
+    var key = '__funcbox_loaded__' + url;
+    if(window[key]) return;
+    window[key]=true;
+    var s = document.createElement('script');
+    s.src = /^https?:/.test(url)?url:'https://'+url;
+    document.body.appendChild(s);
+  }
+  function loadScriptAlways(url){
+    var s = document.createElement('script');
+    s.src = /^https?:/.test(url)?url:'https://'+url;
+    document.body.appendChild(s);
+  }
+
   // 配置
   var EMOJI = "🧰";
   var BTN_LIST = [
-    { name: "導師篩選", hotkey: "1", action: ()=>alert('導師篩選!（自行替換功能）') },
-    { name: "自動填表", hotkey: "2", action: ()=>alert('自動填表!（自行替換功能）') },
-    { name: "批次複製", hotkey: "3", action: ()=>alert('批次複製!（自行替換功能）') }
+    {
+      name: "開新Case",
+      hotkey: "1",
+      action: ()=>loadScriptAlways('alizzzxoxo.github.io/bookmarklet-/new-case.js')
+    },
+    {
+      name: "紅/藍個案",
+      hotkey: "2",
+      action: ()=>loadScriptAlways('alizzzxoxo.github.io/bookmarklet-/bluered.js')
+    },
+    {
+      name: "Part. 1",
+      hotkey: "3",
+      action: ()=>loadScriptAlways('alizzzxoxo.github.io/bookmarklet-/part1.js')
+    },
+    {
+      name: "Part. 2",
+      hotkey: "4",
+      action: ()=>loadScriptAlways('alizzzxoxo.github.io/bookmarklet-/part2.js')
+    },
+    {
+      name: "Auto回覆",
+      hotkey: "5",
+      action: ()=>loadScriptAlways('alizzzxoxo.github.io/bookmarklet-/sleekflow-auto.js')
+    }
   ];
   var MAIN_COLOR = "#7ecedc";
   var BTN_BG = "#7ecedc";
@@ -27,7 +64,7 @@ javascript:(function(){
   var BTN_WIDTH = 180;
   var PANEL_SIZE = 54;
   var FONT = "'Segoe UI','Noto Sans TC',Arial,'Microsoft JhengHei',sans-serif";
-  var GAP = 16; // 建議大一點更美觀
+  var GAP = 16;
   var BOTTOM_OFFSET = 48;
   var SIDE_OFFSET = 24;
   var EXPAND_W = BTN_WIDTH + 44, EXPAND_H = BTN_HEIGHT * BTN_LIST.length + BTN_SPACE * (BTN_LIST.length-1) + 90;
