@@ -1,8 +1,5 @@
 javascript:(function(){
-  // 先清除舊的
   document.querySelectorAll('my-funcbox-root').forEach(el=>el.remove());
-
-  // 建立全畫面host
   var host = document.createElement('my-funcbox-root');
   host.style.position = 'fixed';
   host.style.left = '0'; host.style.top = '0';
@@ -12,7 +9,7 @@ javascript:(function(){
   document.body.appendChild(host);
   var root = host.attachShadow({mode:'open'});
 
-  // 設定
+  // 配置
   var EMOJI = "🧰";
   var BTN_LIST = [
     { name: "導師篩選", hotkey: "1", action: ()=>alert('導師篩選!（自行替換功能）') },
@@ -29,16 +26,12 @@ javascript:(function(){
   var BTN_HEIGHT = 38;
   var BTN_WIDTH = 180;
   var PANEL_SIZE = 54;
-  var PANEL_SHADOW = "0 2px 18px #7ecedc22,0 1px 4px #0002";
   var FONT = "'Segoe UI','Noto Sans TC',Arial,'Microsoft JhengHei',sans-serif";
-
   var EXPAND_W = BTN_WIDTH + 44, EXPAND_H = BTN_HEIGHT * BTN_LIST.length + BTN_SPACE * (BTN_LIST.length-1) + 90;
-  var EXPAND_RADIUS = 18;
-  var DURATION = 260;
 
   root.innerHTML = `
     <style>
-      :host, #float-box, #mainbox, #emoji, #btns, #close-btn, .tool-btn, .hotkey {
+      :host, #float-box, #emoji, #funcbox, #btns, #close-btn, .tool-btn, .hotkey {
         all: initial;
         font-family: ${FONT} !important;
         box-sizing: border-box !important;
@@ -48,69 +41,55 @@ javascript:(function(){
         left: calc(100vw - ${PANEL_SIZE+24}px);
         top: calc(100vh - ${PANEL_SIZE+24}px);
         width: ${PANEL_SIZE}px; height: ${PANEL_SIZE}px;
-        z-index:1;
+        z-index:1003;
         pointer-events: auto;
         touch-action: none;
       }
-      #mainbox {
-        width:${PANEL_SIZE}px; height:${PANEL_SIZE}px;
+      #emoji {
+        width: ${PANEL_SIZE}px; height: ${PANEL_SIZE}px;
         border-radius: 50%;
         background: ${MAIN_COLOR};
-        box-shadow: ${PANEL_SHADOW};
-        display: flex; align-items: center; justify-content: center;
-        font-size: 26px !important;
-        cursor: grab;
-        user-select: none;
-        transition: width ${DURATION}ms cubic-bezier(.4,0,.2,1), height ${DURATION}ms cubic-bezier(.4,0,.2,1), border-radius ${DURATION}ms cubic-bezier(.4,0,.2,1), background ${DURATION}ms;
-        position: relative;
-        overflow: visible;
-      }
-      #emoji {
-        opacity: 1;
-        transition: opacity ${Math.round(DURATION*0.6)}ms;
-        z-index:2;
-        pointer-events:auto;
-        user-select: none;
+        box-shadow: 0 2px 18px #7ecedc22,0 1px 4px #0002;
         font-size: 28px !important;
         display: flex;
         align-items: center;
         justify-content: center;
-      }
-      #mainbox.expanded {
-        width:${EXPAND_W}px;
-        height:${EXPAND_H}px;
-        border-radius: ${EXPAND_RADIUS}px;
-        background: rgba(255,255,255,0.01);
-        cursor: default;
-      }
-      #mainbox.expanded #emoji {
-        opacity: 0;
-        pointer-events:none;
-      }
-      #content {
+        cursor: grab;
+        user-select: none;
+        pointer-events: auto;
         position: absolute;
-        left: 0; top: 0; width: 100%; height: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+        left: 0; top: 0;
+        z-index: 1004;
+        transition: box-shadow .2s;
+      }
+      #emoji:active { box-shadow: 0 4px 22px #7ecedc33,0 2px 7px #0003; }
+      #funcbox {
+        position: absolute;
+        display: none;
+        background: transparent;
+        z-index: 1002;
         pointer-events: none;
       }
+      #funcbox.expanded {
+        display: block;
+        pointer-events: auto;
+        animation: boxin .18s cubic-bezier(.6,.2,.2,1);
+      }
+      @keyframes boxin{
+        0%{opacity:0;transform:scale(0.92);}
+        100%{opacity:1;transform:scale(1);}
+      }
       #btns {
-        display: none;
+        display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        opacity:0;
-        pointer-events:none;
-        transition: opacity ${Math.round(DURATION*0.6)}ms ${Math.round(DURATION*0.2)}ms;
+        opacity:1;
+        pointer-events:auto;
         z-index:10;
-      }
-      #mainbox.expanded #btns { 
-        display: flex;
-        opacity:1; 
-        pointer-events:auto; 
-        transition: opacity ${Math.round(DURATION*0.7)}ms ${Math.round(DURATION*0.1)}ms;
+        min-width: ${BTN_WIDTH}px;
+        min-height: ${BTN_HEIGHT*BTN_LIST.length+BTN_SPACE*(BTN_LIST.length-1)}px;
+        background: transparent;
       }
       .tool-btn {
         width: ${BTN_WIDTH}px;
@@ -129,22 +108,14 @@ javascript:(function(){
         outline: none;
         letter-spacing: 0.5px;
         user-select:none;
-        opacity:0; transform: translateY(9px) scale(0.97);
+        opacity:1;transform: none;
         animation: none;
-      }
-      #mainbox.expanded .tool-btn {
-        opacity:1; transform: translateY(0) scale(1);
-        animation: btnin .22s cubic-bezier(.45,.1,.2,1) both;
       }
       .tool-btn:first-child{margin-top:0;}
       .tool-btn:hover, .tool-btn:focus {
         background: ${BTN_BG_HOVER};
         color: ${BTN_TEXT_HOVER};
         box-shadow: 0 4px 14px #b9e5ea66;
-      }
-      @keyframes btnin{
-        0%{opacity:0;transform:translateY(14px) scale(0.90);}
-        100%{opacity:1;transform:translateY(0) scale(1);}
       }
       .hotkey {
         background: #f4f8fa;
@@ -176,118 +147,198 @@ javascript:(function(){
         display: flex; align-items: center; justify-content: center;
         outline: none;
         letter-spacing: 1.2px;
-        opacity:0;transform:scale(.93);
-        animation: none;
-      }
-      #mainbox.expanded #close-btn{
         opacity:1;transform:scale(1);
-        animation: btnin .22s .15s cubic-bezier(.45,.1,.2,1) both;
+        animation: none;
       }
       #close-btn:hover, #close-btn:focus {background: #b51b1b;box-shadow:0 5px 18px #ff4c4c55;}
       @media (max-width:600px){
-        #mainbox,#mainbox.expanded{width:96vw !important;min-width:80vw !important;max-width:100vw !important;}
-        #mainbox,#mainbox.expanded{height:auto !important;}
+        #btns{min-width:90vw !important;}
         .tool-btn{width:90vw;max-width:99vw;font-size:15px !important;}
         #close-btn{width:84vw;max-width:99vw;}
       }
     </style>
     <div id="float-box">
-      <div id="mainbox" tabindex="0">
-        <div id="emoji" aria-label="展開工具箱">${EMOJI}</div>
-        <div id="content">
-          <div id="btns" aria-hidden="true">
-            ${BTN_LIST.map((b,i)=>`
-              <button class="tool-btn" data-idx="${i}" tabindex="-1">
-                <span>${b.name}</span>
-                <span class="hotkey">Alt+${b.hotkey}</span>
-              </button>
-            `).join('')}
-            <button id="close-btn" tabindex="-1">✖ 一鍵關閉工具箱</button>
-          </div>
+      <div id="emoji" aria-label="展開工具箱">${EMOJI}</div>
+      <div id="funcbox">
+        <div id="btns" aria-hidden="true">
+          ${BTN_LIST.map((b,i)=>`
+            <button class="tool-btn" data-idx="${i}" tabindex="-1">
+              <span>${b.name}</span>
+              <span class="hotkey">Alt+${b.hotkey}</span>
+            </button>
+          `).join('')}
+          <button id="close-btn" tabindex="-1">✖ 一鍵關閉工具箱</button>
         </div>
       </div>
     </div>
   `;
 
-  // 操作
+  // 狀態與元素
   var box = root.getElementById('float-box');
-  var mainbox = root.getElementById('mainbox');
   var emoji = root.getElementById('emoji');
+  var funcbox = root.getElementById('funcbox');
   var btns = root.getElementById('btns');
   var closeBtn = root.getElementById('close-btn');
   var toolBtns = Array.from(btns.querySelectorAll('.tool-btn'));
-  var dragging=false,dx=0,dy=0, boxX=window.innerWidth-PANEL_SIZE-24, boxY=window.innerHeight-PANEL_SIZE-24, expanded=false;
+  var dragging=false, dx=0, dy=0, boxX=window.innerWidth-PANEL_SIZE-24, boxY=window.innerHeight-PANEL_SIZE-24, expanded=false;
+  var leaveTimer = null;
+  var dragMoved = false;
+  var expandDir = 'right-bottom'; // 預設展開方向
 
+  // 輔助
   function clamp(val,min,max){return Math.max(min,Math.min(max,val));}
   function updateBoxPos(x,y){
-    var exw = expanded ? EXPAND_W : PANEL_SIZE, exh = expanded ? EXPAND_H : PANEL_SIZE;
-    var minX = 8, maxX = window.innerWidth - exw - 8;
-    var minY = 8, maxY = window.innerHeight - exh - 8;
+    // emoji 實體位置
+    var minX = 8, maxX = window.innerWidth - PANEL_SIZE - 8;
+    var minY = 8, maxY = window.innerHeight - PANEL_SIZE - 8;
     x = clamp(x, minX, maxX);
     y = clamp(y, minY, maxY);
     boxX = x; boxY = y;
     box.style.left = boxX + "px";
     box.style.top  = boxY + "px";
+    // funcbox 方向根據 emoji 位置自動決定
+    updateFuncboxDirection();
   }
+
+  function updateFuncboxDirection(){
+    // 根據 emoji 圓心在螢幕哪個象限自動決定展開方向
+    var cx = boxX + PANEL_SIZE/2, cy = boxY + PANEL_SIZE/2;
+    var w = window.innerWidth, h = window.innerHeight;
+    // 距離四邊界
+    var spaceRight = w - (boxX + PANEL_SIZE);
+    var spaceLeft  = boxX;
+    var spaceBottom = h - (boxY + PANEL_SIZE);
+    var spaceTop = boxY;
+
+    // 預設右下，優先往空間最大的方向
+    if(spaceRight >= EXPAND_W && spaceBottom >= EXPAND_H){
+      expandDir = "right-bottom";
+      funcbox.style.left = PANEL_SIZE + "px";
+      funcbox.style.top = "0px";
+    } else if (spaceLeft >= EXPAND_W && spaceBottom >= EXPAND_H){
+      expandDir = "left-bottom";
+      funcbox.style.left = -EXPAND_W + "px";
+      funcbox.style.top = "0px";
+    } else if (spaceRight >= EXPAND_W && spaceTop >= EXPAND_H){
+      expandDir = "right-top";
+      funcbox.style.left = PANEL_SIZE + "px";
+      funcbox.style.top = -EXPAND_H + "px";
+    } else if (spaceLeft >= EXPAND_W && spaceTop >= EXPAND_H){
+      expandDir = "left-top";
+      funcbox.style.left = -EXPAND_W + "px";
+      funcbox.style.top = -EXPAND_H + "px";
+    } else if (spaceBottom >= EXPAND_H) {
+      expandDir = "bottom";
+      funcbox.style.left = "0px";
+      funcbox.style.top = PANEL_SIZE + "px";
+    } else if (spaceTop >= EXPAND_H) {
+      expandDir = "top";
+      funcbox.style.left = "0px";
+      funcbox.style.top = -EXPAND_H + "px";
+    } else if (spaceRight >= EXPAND_W) {
+      expandDir = "right";
+      funcbox.style.left = PANEL_SIZE + "px";
+      funcbox.style.top = "0px";
+    } else if (spaceLeft >= EXPAND_W) {
+      expandDir = "left";
+      funcbox.style.left = -EXPAND_W + "px";
+      funcbox.style.top = "0px";
+    } else {
+      expandDir = "overlap";
+      funcbox.style.left = "0px";
+      funcbox.style.top = "0px";
+    }
+  }
+
   // 拖曳
   function dragStart(ev){
-    if(expanded) return; // 展開時不允許拖曳
-    dragging=true;
+    if(dragging) return;
+    closeBox(); // 收合
+    dragging = true; dragMoved = false;
     var evt = ev.touches ? ev.touches[0] : ev;
-    dx = evt.clientX - boxX;
-    dy = evt.clientY - boxY;
+    dx = evt.clientX - (boxX + PANEL_SIZE/2);
+    dy = evt.clientY - (boxY + PANEL_SIZE/2);
     document.addEventListener(ev.touches?'touchmove':'mousemove', dragMove, {passive:false});
     document.addEventListener(ev.touches?'touchend':'mouseup', dragEnd, {passive:false});
-    mainbox.style.cursor='grabbing';
+    emoji.style.cursor = 'grabbing';
     ev.preventDefault();
   }
   function dragMove(ev){
     var evt = ev.touches ? ev.touches[0] : ev;
-    updateBoxPos(evt.clientX-dx, evt.clientY-dy);
+    updateBoxPos(evt.clientX - PANEL_SIZE/2 - dx, evt.clientY - PANEL_SIZE/2 - dy);
+    dragMoved = true;
     ev.preventDefault();
   }
   function dragEnd(ev){
     dragging=false;
-    mainbox.style.cursor=expanded?'default':'grab';
+    setTimeout(()=>{dragMoved=false;}, 60);
+    emoji.style.cursor = 'grab';
     document.removeEventListener('mousemove', dragMove);
     document.removeEventListener('mouseup', dragEnd);
     document.removeEventListener('touchmove', dragMove);
     document.removeEventListener('touchend', dragEnd);
     ev.preventDefault();
   }
-  mainbox.addEventListener('mousedown', dragStart, {passive:false});
-  mainbox.addEventListener('touchstart', dragStart, {passive:false});
+  emoji.addEventListener('mousedown', dragStart, {passive:false});
+  emoji.addEventListener('touchstart', dragStart, {passive:false});
 
   // 展開/收合
   function openBox(){
     if(expanded) return;
     expanded = true;
-    mainbox.classList.add('expanded');
+    funcbox.classList.add('expanded');
     btns.setAttribute('aria-hidden','false');
-    setTimeout(()=>updateBoxPos(boxX, boxY),10);
-    setTimeout(()=>mainbox.focus(),10);
+    updateFuncboxDirection();
+    setTimeout(()=>funcbox.focus(),10);
   }
   function closeBox(){
     if(!expanded) return;
     expanded = false;
-    mainbox.classList.remove('expanded');
+    funcbox.classList.remove('expanded');
     btns.setAttribute('aria-hidden','true');
-    setTimeout(()=>updateBoxPos(boxX, boxY),10);
+    updateFuncboxDirection();
   }
-  emoji.onclick = function(e){ 
-    if(expanded) return;
-    openBox(); 
-    e.stopPropagation(); 
-  };
 
-  mainbox.onkeydown = function(e){
+  // 滑鼠移到 emoji 就展開
+  emoji.addEventListener("mouseenter", function(e){
+    if(dragging) return;
+    openBox();
+  });
+
+  // 滑鼠移出 emoji 和浮窗都會收合
+  function setupAutoClose(){
+    // 滑鼠移出 funcbox 或 emoji 就自動收合
+    function tryAutoClose(e) {
+      if(!expanded) return;
+      // 若滑鼠仍在 emoji 或 funcbox內，不收合
+      var rel = e.relatedTarget;
+      if (funcbox.contains(rel) || emoji.contains(rel)) return;
+      clearTimeout(leaveTimer);
+      leaveTimer = setTimeout(closeBox, 250);
+    }
+    function clearAutoClose(){
+      clearTimeout(leaveTimer);
+    }
+    funcbox.addEventListener("mouseleave", tryAutoClose, false);
+    funcbox.addEventListener("mouseenter", clearAutoClose, false);
+    emoji.addEventListener("mouseleave", tryAutoClose, false);
+    emoji.addEventListener("mouseenter", clearAutoClose, false);
+  }
+  setupAutoClose();
+
+  // 點擊 emoji 不做任何事（禁用點擊展開）
+  emoji.onclick = function(e){};
+
+  // Keyboard
+  btns.tabIndex = -1;
+  funcbox.onkeydown = function(e){
     if((e.key===" "||e.key==="Enter")&&!expanded){openBox();e.preventDefault();}
     if((e.key==="Escape")&&expanded){closeBox();e.preventDefault();}
   };
 
-  // 點浮窗外收合
+  // 點外面收合
   root.addEventListener('mousedown', function(e){
-    if(expanded && !mainbox.contains(e.target)) closeBox();
+    if(expanded && !funcbox.contains(e.target) && !emoji.contains(e.target)) closeBox();
   });
 
   // 按鈕功能
@@ -316,7 +367,6 @@ javascript:(function(){
     document.querySelectorAll('my-funcbox-root').forEach(el=>el.remove());
   };
 
-  // 響應視窗調整
   window.addEventListener('resize', function(){ setTimeout(()=>updateBoxPos(boxX, boxY),30); });
   setTimeout(()=>updateBoxPos(boxX, boxY),30);
 
