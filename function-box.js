@@ -65,7 +65,7 @@ javascript:(function(){
   var PANEL_SIZE = 54;
   var FONT = "'Segoe UI','Noto Sans TC',Arial,'Microsoft JhengHei',sans-serif";
   var GAP = 16;
-  var BOTTOM_OFFSET = 120;
+  var BOTTOM_OFFSET = 125;
   var SIDE_OFFSET = 24;
   var EXPAND_W = BTN_WIDTH + 44, EXPAND_H = BTN_HEIGHT * BTN_LIST.length + BTN_SPACE * (BTN_LIST.length-1) + 90;
 
