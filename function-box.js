@@ -27,6 +27,9 @@ javascript:(function(){
   var BTN_WIDTH = 180;
   var PANEL_SIZE = 54;
   var FONT = "'Segoe UI','Noto Sans TC',Arial,'Microsoft JhengHei',sans-serif";
+  var GAP = 16; // 建議大一點更美觀
+  var BOTTOM_OFFSET = 48;
+  var SIDE_OFFSET = 24;
   var EXPAND_W = BTN_WIDTH + 44, EXPAND_H = BTN_HEIGHT * BTN_LIST.length + BTN_SPACE * (BTN_LIST.length-1) + 90;
 
   root.innerHTML = `
@@ -38,8 +41,8 @@ javascript:(function(){
       }
       #float-box {
         position: absolute;
-        left: calc(100vw - ${PANEL_SIZE+24}px);
-        top: calc(100vh - ${PANEL_SIZE+24}px);
+        left: calc(100vw - ${PANEL_SIZE+SIDE_OFFSET}px);
+        top: calc(100vh - ${PANEL_SIZE+BOTTOM_OFFSET}px);
         width: ${PANEL_SIZE}px; height: ${PANEL_SIZE}px;
         z-index:1003;
         pointer-events: auto;
@@ -63,6 +66,17 @@ javascript:(function(){
         transition: box-shadow .2s;
       }
       #emoji:active { box-shadow: 0 4px 22px #7ecedc33,0 2px 7px #0003; }
+      .emoji-inner {
+        width: 100%; height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 29px !important;
+        line-height: 1;
+        vertical-align: middle;
+        margin-top: 0;
+        transform: translateY(-7%);
+      }
       #funcbox {
         position: absolute;
         display: none;
@@ -73,11 +87,11 @@ javascript:(function(){
       #funcbox.expanded {
         display: block;
         pointer-events: auto;
-        animation: boxin .18s cubic-bezier(.6,.2,.2,1);
+        animation: boxin .20s cubic-bezier(.7,.2,.2,1);
       }
       @keyframes boxin{
-        0%{opacity:0;transform:scale(0.92);}
-        100%{opacity:1;transform:scale(1);}
+        0%{opacity:0;transform:translateY(22px) scale(0.97);}
+        100%{opacity:1;transform:translateY(0) scale(1);}
       }
       #btns {
         display: flex;
@@ -90,6 +104,9 @@ javascript:(function(){
         min-width: ${BTN_WIDTH}px;
         min-height: ${BTN_HEIGHT*BTN_LIST.length+BTN_SPACE*(BTN_LIST.length-1)}px;
         background: transparent;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+        transition: padding .15s;
       }
       .tool-btn {
         width: ${BTN_WIDTH}px;
@@ -101,7 +118,7 @@ javascript:(function(){
         font-size: 15px !important;
         font-weight: 500 !important;
         margin: 0;
-        margin-top: ${BTN_SPACE}px;
+        margin-top: ${BTN_SPACE}px !important;
         box-shadow: 0 2px 8px #b9e5ea33;
         cursor: pointer;
         display: flex; align-items: center; justify-content: center;
@@ -111,7 +128,7 @@ javascript:(function(){
         opacity:1;transform: none;
         animation: none;
       }
-      .tool-btn:first-child{margin-top:0;}
+      .tool-btn:first-child{margin-top:${BTN_SPACE}px !important;}
       .tool-btn:hover, .tool-btn:focus {
         background: ${BTN_BG_HOVER};
         color: ${BTN_TEXT_HOVER};
@@ -158,7 +175,7 @@ javascript:(function(){
       }
     </style>
     <div id="float-box">
-      <div id="emoji" aria-label="展開工具箱">${EMOJI}</div>
+      <div id="emoji" aria-label="展開工具箱"><span class="emoji-inner">${EMOJI}</span></div>
       <div id="funcbox">
         <div id="btns" aria-hidden="true">
           ${BTN_LIST.map((b,i)=>`
@@ -180,15 +197,15 @@ javascript:(function(){
   var btns = root.getElementById('btns');
   var closeBtn = root.getElementById('close-btn');
   var toolBtns = Array.from(btns.querySelectorAll('.tool-btn'));
-  var dragging=false, dx=0, dy=0, boxX=window.innerWidth-PANEL_SIZE-24, boxY=window.innerHeight-PANEL_SIZE-24, expanded=false;
+  var dragging=false, dx=0, dy=0, expanded=false;
   var leaveTimer = null;
   var dragMoved = false;
-  var expandDir = 'right-bottom'; // 預設展開方向
+  var expandDir = 'bottom';
+  var boxX = window.innerWidth-PANEL_SIZE-SIDE_OFFSET;
+  var boxY = window.innerHeight-PANEL_SIZE-BOTTOM_OFFSET;
 
-  // 輔助
   function clamp(val,min,max){return Math.max(min,Math.min(max,val));}
   function updateBoxPos(x,y){
-    // emoji 實體位置
     var minX = 8, maxX = window.innerWidth - PANEL_SIZE - 8;
     var minY = 8, maxY = window.innerHeight - PANEL_SIZE - 8;
     x = clamp(x, minX, maxX);
@@ -196,64 +213,72 @@ javascript:(function(){
     boxX = x; boxY = y;
     box.style.left = boxX + "px";
     box.style.top  = boxY + "px";
-    // funcbox 方向根據 emoji 位置自動決定
     updateFuncboxDirection();
   }
 
+  // 上下展開都只留 GAP，並且讓 btns 有對應 padding
   function updateFuncboxDirection(){
-    // 根據 emoji 圓心在螢幕哪個象限自動決定展開方向
-    var cx = boxX + PANEL_SIZE/2, cy = boxY + PANEL_SIZE/2;
     var w = window.innerWidth, h = window.innerHeight;
-    // 距離四邊界
     var spaceRight = w - (boxX + PANEL_SIZE);
     var spaceLeft  = boxX;
     var spaceBottom = h - (boxY + PANEL_SIZE);
     var spaceTop = boxY;
 
-    // 預設右下，優先往空間最大的方向
-    if(spaceRight >= EXPAND_W && spaceBottom >= EXPAND_H){
-      expandDir = "right-bottom";
-      funcbox.style.left = PANEL_SIZE + "px";
-      funcbox.style.top = "0px";
-    } else if (spaceLeft >= EXPAND_W && spaceBottom >= EXPAND_H){
-      expandDir = "left-bottom";
-      funcbox.style.left = -EXPAND_W + "px";
-      funcbox.style.top = "0px";
-    } else if (spaceRight >= EXPAND_W && spaceTop >= EXPAND_H){
-      expandDir = "right-top";
-      funcbox.style.left = PANEL_SIZE + "px";
-      funcbox.style.top = -EXPAND_H + "px";
-    } else if (spaceLeft >= EXPAND_W && spaceTop >= EXPAND_H){
-      expandDir = "left-top";
-      funcbox.style.left = -EXPAND_W + "px";
-      funcbox.style.top = -EXPAND_H + "px";
-    } else if (spaceBottom >= EXPAND_H) {
+    // 預設都清掉 padding
+    btns.style.paddingTop = "0";
+    btns.style.paddingBottom = "0";
+
+    if(spaceBottom >= EXPAND_H){
       expandDir = "bottom";
-      funcbox.style.left = "0px";
-      funcbox.style.top = PANEL_SIZE + "px";
-    } else if (spaceTop >= EXPAND_H) {
+      var left = clamp(
+        PANEL_SIZE/2 - EXPAND_W/2,
+        -boxX,
+        w - boxX - EXPAND_W
+      );
+      funcbox.style.left = left + "px";
+      funcbox.style.top = (PANEL_SIZE + GAP) + "px";
+      funcbox.style.transformOrigin = "top center";
+      btns.style.paddingTop = GAP + "px";
+      btns.style.paddingBottom = "0";
+    } else if(spaceTop >= EXPAND_H){
       expandDir = "top";
-      funcbox.style.left = "0px";
-      funcbox.style.top = -EXPAND_H + "px";
-    } else if (spaceRight >= EXPAND_W) {
+      var left = clamp(
+        PANEL_SIZE/2 - EXPAND_W/2,
+        -boxX,
+        w - boxX - EXPAND_W
+      );
+      funcbox.style.left = left + "px";
+      funcbox.style.top = (-EXPAND_H - GAP) + "px";
+      funcbox.style.transformOrigin = "bottom center";
+      btns.style.paddingTop = "0";
+      btns.style.paddingBottom = GAP + "px";
+    } else if(spaceRight >= EXPAND_W){
       expandDir = "right";
-      funcbox.style.left = PANEL_SIZE + "px";
+      funcbox.style.left = (PANEL_SIZE + GAP) + "px";
       funcbox.style.top = "0px";
-    } else if (spaceLeft >= EXPAND_W) {
+      funcbox.style.transformOrigin = "center left";
+      btns.style.paddingTop = GAP + "px";
+      btns.style.paddingBottom = GAP + "px";
+    } else if(spaceLeft >= EXPAND_W){
       expandDir = "left";
-      funcbox.style.left = -EXPAND_W + "px";
+      funcbox.style.left = (-EXPAND_W - GAP) + "px";
       funcbox.style.top = "0px";
+      funcbox.style.transformOrigin = "center right";
+      btns.style.paddingTop = GAP + "px";
+      btns.style.paddingBottom = GAP + "px";
     } else {
       expandDir = "overlap";
       funcbox.style.left = "0px";
       funcbox.style.top = "0px";
+      funcbox.style.transformOrigin = "center";
+      btns.style.paddingTop = GAP + "px";
+      btns.style.paddingBottom = GAP + "px";
     }
   }
 
-  // 拖曳
   function dragStart(ev){
     if(dragging) return;
-    closeBox(); // 收合
+    closeBox();
     dragging = true; dragMoved = false;
     var evt = ev.touches ? ev.touches[0] : ev;
     dx = evt.clientX - (boxX + PANEL_SIZE/2);
@@ -282,7 +307,6 @@ javascript:(function(){
   emoji.addEventListener('mousedown', dragStart, {passive:false});
   emoji.addEventListener('touchstart', dragStart, {passive:false});
 
-  // 展開/收合
   function openBox(){
     if(expanded) return;
     expanded = true;
@@ -299,18 +323,14 @@ javascript:(function(){
     updateFuncboxDirection();
   }
 
-  // 滑鼠移到 emoji 就展開
   emoji.addEventListener("mouseenter", function(e){
     if(dragging) return;
     openBox();
   });
 
-  // 滑鼠移出 emoji 和浮窗都會收合
   function setupAutoClose(){
-    // 滑鼠移出 funcbox 或 emoji 就自動收合
     function tryAutoClose(e) {
       if(!expanded) return;
-      // 若滑鼠仍在 emoji 或 funcbox內，不收合
       var rel = e.relatedTarget;
       if (funcbox.contains(rel) || emoji.contains(rel)) return;
       clearTimeout(leaveTimer);
@@ -326,22 +346,18 @@ javascript:(function(){
   }
   setupAutoClose();
 
-  // 點擊 emoji 不做任何事（禁用點擊展開）
   emoji.onclick = function(e){};
 
-  // Keyboard
   btns.tabIndex = -1;
   funcbox.onkeydown = function(e){
     if((e.key===" "||e.key==="Enter")&&!expanded){openBox();e.preventDefault();}
     if((e.key==="Escape")&&expanded){closeBox();e.preventDefault();}
   };
 
-  // 點外面收合
   root.addEventListener('mousedown', function(e){
     if(expanded && !funcbox.contains(e.target) && !emoji.contains(e.target)) closeBox();
   });
 
-  // 按鈕功能
   toolBtns.forEach(function(btn,i){
     btn.onclick = function(e){
       if(!expanded) return;
@@ -349,7 +365,6 @@ javascript:(function(){
     }
   });
 
-  // 熱鍵功能
   window.addEventListener('keydown', function(e){
     if(!expanded) return;
     BTN_LIST.forEach((b,i)=>{
@@ -362,7 +377,6 @@ javascript:(function(){
     if(e.key==="Escape"){closeBox();}
   });
 
-  // 一鍵關閉
   closeBtn.onclick = function(){
     document.querySelectorAll('my-funcbox-root').forEach(el=>el.remove());
   };
