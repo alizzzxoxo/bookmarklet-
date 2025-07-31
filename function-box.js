@@ -184,7 +184,7 @@ javascript:(function(){
               <span class="hotkey">Alt+${b.hotkey}</span>
             </button>
           `).join('')}
-          <button id="close-btn" tabindex="-1">✖ 一鍵關閉工具箱</button>
+          <button id="close-btn" tabindex="-1">✖ 關閉工具箱</button>
         </div>
       </div>
     </div>
