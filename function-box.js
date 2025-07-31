@@ -38,12 +38,12 @@ javascript:(function(){
       action: ()=>loadScriptAlways('alizzzxoxo.github.io/bookmarklet-/bluered.js')
     },
     {
-      name: "Part. 1",
+      name: "洗Case(1)",
       hotkey: "3",
       action: ()=>loadScriptAlways('alizzzxoxo.github.io/bookmarklet-/part1.js')
     },
     {
-      name: "Part. 2",
+      name: "導師列表",
       hotkey: "4",
       action: ()=>loadScriptAlways('alizzzxoxo.github.io/bookmarklet-/part2.js')
     },
