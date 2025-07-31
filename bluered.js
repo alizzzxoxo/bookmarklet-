@@ -212,10 +212,14 @@ if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace
         var reqInput2 = document.getElementById('requirements') || document.querySelector('input[name="requirements"]');
         if(reqInput2) {
           reqInput2.focus();
-          var event = new KeyboardEvent('keydown', {key:'Enter', keyCode:13, which:13, bubbles:true});
-          reqInput2.dispatchEvent(event);
-          reqInput2.blur();
-          alert('已自動加入「'+gender+'」並提交');
+          // 將送出改成點擊 case_info_update
+          var updateBtn = document.getElementById('case_info_update');
+          if(updateBtn){
+            updateBtn.click();
+            alert('已自動加入「'+gender+'」並提交（已點擊更新）');
+          }else{
+            alert('已點擊「'+gender+'」按鈕，但找不到更新按鈕，請手動送出');
+          }
         } else {
           alert('已點擊「'+gender+'」按鈕，但找不到 requirements input，請手動送出');
         }
@@ -271,10 +275,14 @@ if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace
         }
       }
       feeInput.focus();
-      var event = new KeyboardEvent('keydown', {key:'Enter', keyCode:13, which:13, bubbles:true});
-      feeInput.dispatchEvent(event);
-      feeInput.blur();
-      alert('已自動填寫理想學費 '+feeInput.value+' 並提交');
+      // 送出改為點擊 case_info_update
+      var updateBtn1 = document.getElementById('case_info_update');
+      if(updateBtn1){
+        updateBtn1.click();
+        alert('已自動填寫理想學費 '+feeInput.value+' 並點擊更新');
+      }else{
+        alert('已自動填寫理想學費 '+feeInput.value+'，但找不到更新按鈕，請手動送出');
+      }
       return;
     }
 
@@ -292,10 +300,14 @@ if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace
       }
       input.value += newContent;
       input.focus();
-      var event2 = new KeyboardEvent('keydown', {key:'Enter', keyCode:13, which:13, bubbles:true});
-      input.dispatchEvent(event2);
-      input.blur();
-      alert('已自動填寫「【不接受視像】」並提交');
+      // 送出改為點擊 case_info_update
+      var updateBtn2 = document.getElementById('case_info_update');
+      if(updateBtn2){
+        updateBtn2.click();
+        alert('已自動填寫「【不接受視像】」並點擊更新');
+      }else{
+        alert('已自動填寫「【不接受視像】」，但找不到更新按鈕，請手動送出');
+      }
       return;
     }
 
@@ -311,10 +323,14 @@ if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace
     }
     input.value += newContent;
     input.focus();
-    var event3 = new KeyboardEvent('keydown', {key:'Enter', keyCode:13, which:13, bubbles:true});
-    input.dispatchEvent(event3);
-    input.blur();
-    alert('已更新原因並提交');
+    // 送出改為點擊 case_info_update
+    var updateBtn3 = document.getElementById('case_info_update');
+    if(updateBtn3){
+      updateBtn3.click();
+      alert('已更新原因並點擊更新');
+    }else{
+      alert('已更新原因，但找不到更新按鈕，請手動送出');
+    }
   };
 })();
 
