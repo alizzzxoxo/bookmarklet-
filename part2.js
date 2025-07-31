@@ -217,10 +217,10 @@ const TAGS = [
   { key: "area", label: "地點", desc: "地點或鄰近區" },
   { key: "gender", label: "性別", desc: "指定性別" },
   { key: "grade", label: "成績", desc: "DSE等級符合" },
-  { key: "verified", label: "驗證", desc: "需已驗證成績" },
-  { key: "fresh", label: "應屆", desc: "隱藏應屆考生" },
+  { key: "verified", label: "已驗證", desc: "需已驗證成績" },
+  { key: "fresh", label: "隱藏應屆", desc: "隱藏應屆考生" },
   { key: "exp", label: "有經驗", desc: "需有經驗" },
-  { key: "special", label: "特殊要求", desc: "自訂關鍵字" },
+  { key: "special", label: "其他要求", desc: "自訂關鍵字" },
   { key: "bad", label: "隱藏差評", desc: "隱藏差評" }
 ];
 
