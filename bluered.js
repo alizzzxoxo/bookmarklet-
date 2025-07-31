@@ -127,45 +127,121 @@ if (onlyReason.startsWith('心儀履歷')) onlyReason = onlyReason.replace(/^心
 if (onlyReason.includes('-')) onlyReason = onlyReason.split('-').slice(1).join('-').trim();
 if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace(/^不合適原因：/, '').trim();
 
-// ====== 彈窗UI ======
+// ====== 極簡美化彈窗UI ======
 (function(){
   document.querySelectorAll('#noTutorPopup').forEach(function(e){e.remove();});
-  // 只顯示這一句提示
-  var reasonTip = "💡提示💡【更新】按鈕會自動更新學費、不能面授的要求<br>學歷、其他 請自行檢查或編輯後，再點擊【更新】";
+
+  var reasonTip = "【更新】會自動更新學費、不能面授要求<br>學歷、其他請自行檢查或編輯後再點擊【更新】";
 
   var popup = document.createElement('div');
   popup.id = 'noTutorPopup';
   popup.innerHTML =
-    '<div style="font-size:17px;margin-bottom:12px;">'
-    + (caseNum ? 'CaseID: <b>'+caseNum+'</b><br>' : '')
-    + '時間：<b>'+formattedTime+'</b><br>'
-    + '原因：<span id="reasonText">'+onlyReason+'</span><br>'
-    + '<span style="color:#888;font-size:12px;">'+reasonTip+'</span>'
-    + '</div>'
-    + '<button id="btnGender" style="margin-right:10px;">性別</button>'
-    + '<button id="btnEdit" style="margin-right:10px;">編輯原因</button>'
-    + '<button id="btnUpdate" style="margin-right:10px;">更新</button>'
-    + '<span id="closeNoTutorPopup" style="float:right;cursor:pointer;font-size:16px;">❌</span>';
-  Object.assign(popup.style, {
-    position: 'fixed',
-    top: '16px',
-    right: '16px',
-    left: 'auto',
-    background:'#fff',
-    border:'2px solid #888',
-    padding:'24px',
-    zIndex:99999,
-    borderRadius:'12px',
-    boxShadow:'0 6px 32px #0003',
-    minWidth:'340px'
-  });
+    `<div class="ntp-header">
+      <span class="ntp-title">沒有合適導師</span>
+      <span id="closeNoTutorPopup" class="ntp-close">✕</span>
+    </div>
+    <div class="ntp-block">
+      ${caseNum ? '<div class="ntp-caseid">CaseID: <b>'+caseNum+'</b></div>' : ''}
+      <div class="ntp-time">時間：<b>${formattedTime}</b></div>
+    </div>
+    <div class="ntp-block">
+      <div class="ntp-reason-label">原因：</div>
+      <div class="ntp-reason"><span id="reasonText">${onlyReason}</span></div>
+    </div>
+    <div class="ntp-tip">${reasonTip}</div>
+    <div class="ntp-btn-row">
+      <button id="btnGender" class="ntp-btn">性別</button>
+      <button id="btnEdit" class="ntp-btn">編輯原因</button>
+      <button id="btnUpdate" class="ntp-btn ntp-btn-main">更新</button>
+    </div>`;
+
+  popup.style.cssText = `
+    position:fixed;top:20px;right:20px;z-index:99999;
+    background: #fff;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 15px;
+    box-shadow: 0 4px 24px #0001;
+    padding: 20px 18px 14px 18px;
+    min-width: 280px;max-width:90vw;
+    font-family: system-ui,sans-serif;
+    font-size: 16px;
+    color: #31313a;
+    box-sizing: border-box;
+  `;
+
+  if (!document.getElementById('noTutorPopupStyle')) {
+    var style = document.createElement('style');
+    style.id = 'noTutorPopupStyle';
+    style.innerHTML = `
+      #noTutorPopup .ntp-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 8px;
+      }
+      #noTutorPopup .ntp-title {
+        font-size: 18px; font-weight: 600; letter-spacing: 1px;
+        color: #666;
+      }
+      #noTutorPopup .ntp-close {
+        cursor: pointer; font-size: 20px; color: #bdbdbd; transition: color 0.16s;
+      }
+      #noTutorPopup .ntp-close:hover { color: #888; }
+      #noTutorPopup .ntp-caseid,
+      #noTutorPopup .ntp-time {
+        font-size: 14.2px; color: #444; margin-bottom: 2px;
+      }
+      #noTutorPopup .ntp-block { margin-bottom: 10px;}
+      #noTutorPopup .ntp-reason-label {
+        display: inline-block; font-weight: 500; color: #888; margin-right: 3px;
+      }
+      #noTutorPopup .ntp-reason {
+        display: inline-block; font-size: 15.2px; color: #222;
+        background: #f8f8fa; padding: 3px 8px; border-radius: 6px;
+        margin-left: 1px;
+      }
+      #noTutorPopup .ntp-tip {
+        font-size: 13px; color: #7b7b7b; margin-bottom: 12px; margin-top: 1px;
+        background: #f3f3f3; border-radius: 5px; padding: 5px 7px;
+        line-height: 1.6; letter-spacing: 0.3px;
+      }
+      #noTutorPopup .ntp-btn-row {
+        display: flex; flex-wrap: wrap;
+        gap: 8px; justify-content: flex-end;
+      }
+      #noTutorPopup .ntp-btn {
+        border: 1.2px solid #e0e0e0; background: #fafbfc;
+        color: #444; border-radius: 7px;
+        font-size: 14.2px; font-weight: 500; cursor: pointer;
+        padding: 6px 17px; box-shadow: 0 1px 3px #0001;
+        transition: background .18s, color .18s, border .18s;
+        margin-bottom: 2px;
+      }
+      #noTutorPopup .ntp-btn:hover {
+        background: #ececec; color: #222; border-color: #bdbdbd;
+      }
+      #noTutorPopup .ntp-btn-main {
+        background: #f4eacb; color: #9c7b14; border-color: #e6dab6;
+      }
+      #noTutorPopup .ntp-btn-main:hover {
+        background: #f3e09d; color: #6a4b00; border-color: #dfc871;
+      }
+      @media (max-width: 600px) {
+        #noTutorPopup {
+          left: 5vw !important; right: 5vw !important; min-width: 0 !important; max-width: 90vw !important; padding: 10px 3vw 8px 3vw !important;
+        }
+        #noTutorPopup .ntp-btn-row {
+          flex-direction: column; align-items: stretch; gap: 6px;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
   document.body.appendChild(popup);
 
-  function closePopup() {
-    popup.remove();
-  }
+  function closePopup() { popup.remove(); }
   document.getElementById('closeNoTutorPopup').onclick = closePopup;
 
+  // ===== 事件邏輯與原本相同 =====
   document.getElementById('btnGender').onclick = function(){
     var reason = document.getElementById('reasonText').textContent;
     var femaleKeywords = ["女導師","女補習老師","女老師","女生"];
@@ -212,7 +288,6 @@ if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace
         var reqInput2 = document.getElementById('requirements') || document.querySelector('input[name="requirements"]');
         if(reqInput2) {
           reqInput2.focus();
-          // 將送出改成點擊 case_info_update
           var updateBtn = document.getElementById('case_info_update');
           if(updateBtn){
             updateBtn.click();
@@ -275,7 +350,6 @@ if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace
         }
       }
       feeInput.focus();
-      // 送出改為點擊 case_info_update
       var updateBtn1 = document.getElementById('case_info_update');
       if(updateBtn1){
         updateBtn1.click();
@@ -300,7 +374,6 @@ if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace
       }
       input.value += newContent;
       input.focus();
-      // 送出改為點擊 case_info_update
       var updateBtn2 = document.getElementById('case_info_update');
       if(updateBtn2){
         updateBtn2.click();
@@ -323,7 +396,6 @@ if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace
     }
     input.value += newContent;
     input.focus();
-    // 送出改為點擊 case_info_update
     var updateBtn3 = document.getElementById('case_info_update');
     if(updateBtn3){
       updateBtn3.click();
