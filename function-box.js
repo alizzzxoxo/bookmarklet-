@@ -11,9 +11,11 @@ javascript:(function(){
 
   // 平台判斷
   var isMac = /Mac/.test(navigator.platform) || /Mac/.test(navigator.userAgent);
-  var hotkeyLabel = isMac ? "Option" : "Alt";
+  var hotkeyLabel = isMac ? "Ctrl" : "Alt";
+  var useCtrl = isMac;
+  var useAlt = !isMac;
 
-  // 動作配置（需讓你的外部js有對應 global toggle function）
+  // 功能配置
   var BTN_LIST = [
     {
       name: "開新Case", hotkey: "1",
@@ -40,7 +42,7 @@ javascript:(function(){
       }
     },
     {
-      name: "洗Case", hotkey: "3",
+      name: "Part. 1", hotkey: "3",
       action: function(){
         if (typeof window.togglePart1 === "function") {
           window.togglePart1();
@@ -52,7 +54,7 @@ javascript:(function(){
       }
     },
     {
-      name: "導師列表", hotkey: "4",
+      name: "Part. 2", hotkey: "4",
       action: function(){
         if (typeof window.togglePart2 === "function") {
           window.togglePart2();
@@ -77,7 +79,7 @@ javascript:(function(){
     }
   ];
 
-  // UI配色與樣式
+  // UI樣式
   var EMOJI = "🧰";
   var MAIN_COLOR = "#7ecedc";
   var BTN_BG = "#7ecedc";
@@ -403,21 +405,25 @@ javascript:(function(){
   });
   toolBtns.forEach(function(btn,i){
     btn.onclick = function(e){
-      if(!expanded) return;
       BTN_LIST[i].action();
     }
   });
+
+  // 熱鍵全域監聽，macOS用Ctrl+數字，Windows用Alt+數字
   window.addEventListener('keydown', function(e){
-    if(!expanded) return;
     BTN_LIST.forEach((b,i)=>{
-      if(e.altKey && e.key===b.hotkey){
+      if(
+        (useCtrl && e.ctrlKey && !e.altKey && !e.metaKey && e.key===b.hotkey) ||
+        (useAlt && e.altKey && !e.ctrlKey && !e.metaKey && e.key===b.hotkey)
+      ){
         e.preventDefault();
         toolBtns[i].focus();
         toolBtns[i].click();
       }
     });
-    if(e.key==="Escape"){closeBox();}
+    if(expanded && e.key==="Escape"){closeBox();}
   });
+
   closeBtn.onclick = function(){
     document.querySelectorAll('my-funcbox-root').forEach(el=>el.remove());
   };
