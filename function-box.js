@@ -9,50 +9,76 @@ javascript:(function(){
   document.body.appendChild(host);
   var root = host.attachShadow({mode:'open'});
 
-  // 工具函數：動態載入js檔
-  function loadScriptOnce(url){
-    var key = '__funcbox_loaded__' + url;
-    if(window[key]) return;
-    window[key]=true;
-    var s = document.createElement('script');
-    s.src = /^https?:/.test(url)?url:'https://'+url;
-    document.body.appendChild(s);
-  }
-  function loadScriptAlways(url){
-    var s = document.createElement('script');
-    s.src = /^https?:/.test(url)?url:'https://'+url;
-    document.body.appendChild(s);
-  }
+  // 平台判斷
+  var isMac = /Mac/.test(navigator.platform) || /Mac/.test(navigator.userAgent);
+  var hotkeyLabel = isMac ? "Option" : "Alt";
 
-  // 配置
-  var EMOJI = "🧰";
+  // 動作配置（需讓你的外部js有對應 global toggle function）
   var BTN_LIST = [
     {
-      name: "開新Case",
-      hotkey: "1",
-      action: ()=>loadScriptAlways('alizzzxoxo.github.io/bookmarklet-/new-case.js')
+      name: "開新Case", hotkey: "1",
+      action: function(){
+        if (typeof window.toggleNewCase === "function") {
+          window.toggleNewCase();
+        } else {
+          var s = document.createElement('script');
+          s.src = 'https://alizzzxoxo.github.io/bookmarklet-/new-case.js';
+          document.body.appendChild(s);
+        }
+      }
     },
     {
-      name: "紅/藍個案",
-      hotkey: "2",
-      action: ()=>loadScriptAlways('alizzzxoxo.github.io/bookmarklet-/bluered.js')
+      name: "紅/藍個案", hotkey: "2",
+      action: function(){
+        if (typeof window.toggleBlueRed === "function") {
+          window.toggleBlueRed();
+        } else {
+          var s = document.createElement('script');
+          s.src = 'https://alizzzxoxo.github.io/bookmarklet-/bluered.js';
+          document.body.appendChild(s);
+        }
+      }
     },
     {
-      name: "洗Case(1)",
-      hotkey: "3",
-      action: ()=>loadScriptAlways('alizzzxoxo.github.io/bookmarklet-/part1.js')
+      name: "Part. 1", hotkey: "3",
+      action: function(){
+        if (typeof window.togglePart1 === "function") {
+          window.togglePart1();
+        } else {
+          var s = document.createElement('script');
+          s.src = 'https://alizzzxoxo.github.io/bookmarklet-/part1.js';
+          document.body.appendChild(s);
+        }
+      }
     },
     {
-      name: "導師列表",
-      hotkey: "4",
-      action: ()=>loadScriptAlways('alizzzxoxo.github.io/bookmarklet-/part2.js')
+      name: "Part. 2", hotkey: "4",
+      action: function(){
+        if (typeof window.togglePart2 === "function") {
+          window.togglePart2();
+        } else {
+          var s = document.createElement('script');
+          s.src = 'https://alizzzxoxo.github.io/bookmarklet-/part2.js';
+          document.body.appendChild(s);
+        }
+      }
     },
     {
-      name: "Auto回覆",
-      hotkey: "5",
-      action: ()=>loadScriptAlways('alizzzxoxo.github.io/bookmarklet-/sleekflow-auto.js')
+      name: "Auto回覆", hotkey: "5",
+      action: function(){
+        if (typeof window.toggleSleekflowAuto === "function") {
+          window.toggleSleekflowAuto();
+        } else {
+          var s = document.createElement('script');
+          s.src = 'https://alizzzxoxo.github.io/bookmarklet-/sleekflow-auto.js';
+          document.body.appendChild(s);
+        }
+      }
     }
   ];
+
+  // UI配色與樣式
+  var EMOJI = "🧰";
   var MAIN_COLOR = "#7ecedc";
   var BTN_BG = "#7ecedc";
   var BTN_BG_HOVER = "#b9e5ea";
@@ -65,7 +91,7 @@ javascript:(function(){
   var PANEL_SIZE = 54;
   var FONT = "'Segoe UI','Noto Sans TC',Arial,'Microsoft JhengHei',sans-serif";
   var GAP = 16;
-  var BOTTOM_OFFSET = 125;
+  var BOTTOM_OFFSET = 120;
   var SIDE_OFFSET = 24;
   var EXPAND_W = BTN_WIDTH + 44, EXPAND_H = BTN_HEIGHT * BTN_LIST.length + BTN_SPACE * (BTN_LIST.length-1) + 90;
 
@@ -218,7 +244,7 @@ javascript:(function(){
           ${BTN_LIST.map((b,i)=>`
             <button class="tool-btn" data-idx="${i}" tabindex="-1">
               <span>${b.name}</span>
-              <span class="hotkey">Alt+${b.hotkey}</span>
+              <span class="hotkey">${hotkeyLabel}+${b.hotkey}</span>
             </button>
           `).join('')}
           <button id="close-btn" tabindex="-1">✖ 關閉工具箱</button>
@@ -252,26 +278,17 @@ javascript:(function(){
     box.style.top  = boxY + "px";
     updateFuncboxDirection();
   }
-
-  // 上下展開都只留 GAP，並且讓 btns 有對應 padding
   function updateFuncboxDirection(){
     var w = window.innerWidth, h = window.innerHeight;
     var spaceRight = w - (boxX + PANEL_SIZE);
     var spaceLeft  = boxX;
     var spaceBottom = h - (boxY + PANEL_SIZE);
     var spaceTop = boxY;
-
-    // 預設都清掉 padding
     btns.style.paddingTop = "0";
     btns.style.paddingBottom = "0";
-
     if(spaceBottom >= EXPAND_H){
       expandDir = "bottom";
-      var left = clamp(
-        PANEL_SIZE/2 - EXPAND_W/2,
-        -boxX,
-        w - boxX - EXPAND_W
-      );
+      var left = clamp(PANEL_SIZE/2 - EXPAND_W/2, -boxX, w - boxX - EXPAND_W);
       funcbox.style.left = left + "px";
       funcbox.style.top = (PANEL_SIZE + GAP) + "px";
       funcbox.style.transformOrigin = "top center";
@@ -279,11 +296,7 @@ javascript:(function(){
       btns.style.paddingBottom = "0";
     } else if(spaceTop >= EXPAND_H){
       expandDir = "top";
-      var left = clamp(
-        PANEL_SIZE/2 - EXPAND_W/2,
-        -boxX,
-        w - boxX - EXPAND_W
-      );
+      var left = clamp(PANEL_SIZE/2 - EXPAND_W/2, -boxX, w - boxX - EXPAND_W);
       funcbox.style.left = left + "px";
       funcbox.style.top = (-EXPAND_H - GAP) + "px";
       funcbox.style.transformOrigin = "bottom center";
@@ -312,7 +325,6 @@ javascript:(function(){
       btns.style.paddingBottom = GAP + "px";
     }
   }
-
   function dragStart(ev){
     if(dragging) return;
     closeBox();
@@ -359,12 +371,10 @@ javascript:(function(){
     btns.setAttribute('aria-hidden','true');
     updateFuncboxDirection();
   }
-
   emoji.addEventListener("mouseenter", function(e){
     if(dragging) return;
     openBox();
   });
-
   function setupAutoClose(){
     function tryAutoClose(e) {
       if(!expanded) return;
@@ -382,26 +392,21 @@ javascript:(function(){
     emoji.addEventListener("mouseenter", clearAutoClose, false);
   }
   setupAutoClose();
-
   emoji.onclick = function(e){};
-
   btns.tabIndex = -1;
   funcbox.onkeydown = function(e){
     if((e.key===" "||e.key==="Enter")&&!expanded){openBox();e.preventDefault();}
     if((e.key==="Escape")&&expanded){closeBox();e.preventDefault();}
   };
-
   root.addEventListener('mousedown', function(e){
     if(expanded && !funcbox.contains(e.target) && !emoji.contains(e.target)) closeBox();
   });
-
   toolBtns.forEach(function(btn,i){
     btn.onclick = function(e){
       if(!expanded) return;
       BTN_LIST[i].action();
     }
   });
-
   window.addEventListener('keydown', function(e){
     if(!expanded) return;
     BTN_LIST.forEach((b,i)=>{
@@ -413,12 +418,9 @@ javascript:(function(){
     });
     if(e.key==="Escape"){closeBox();}
   });
-
   closeBtn.onclick = function(){
     document.querySelectorAll('my-funcbox-root').forEach(el=>el.remove());
   };
-
   window.addEventListener('resize', function(){ setTimeout(()=>updateBoxPos(boxX, boxY),30); });
   setTimeout(()=>updateBoxPos(boxX, boxY),30);
-
 })();
