@@ -218,14 +218,14 @@ const TAGS = [
   { key: "gender", label: "性別", desc: "指定性別" },
   { key: "grade", label: "成績", desc: "DSE等級符合" },
   { key: "verified", label: "已驗證", desc: "需已驗證成績" },
-  { key: "fresh", label: "隱藏應屆", desc: "隱藏應屆考生" },
+  { key: "fresh", label: "應屆", desc: "只顯示應屆考生" }, // 已更改
   { key: "exp", label: "有經驗", desc: "需有經驗" },
   { key: "special", label: "其他要求", desc: "自訂關鍵字" },
   { key: "bad", label: "隱藏差評", desc: "隱藏差評" }
 ];
 
 let filterState = {
-  fee:true, area:true, gender:false, grade:false, verified:false, fresh:true, exp:false, special:false, bad:true,
+  fee:true, area:true, gender:false, grade:false, verified:false, fresh:false, exp:false, special:false, bad:true, // fresh: false
   feeRange:null, genderVal:null, gradeVal:null, verifiedVal:null, expVal:null, specialVal:[], // now array
   areaVal:null, caseData:null, tutorData:[]
 };
@@ -461,7 +461,9 @@ function tutorFilter(tut, state){
   if(state.verified){
     if(tut.verified!==true) reasons.push("未驗證");
   }
-  if(state.fresh && tut.fresh) reasons.push("應屆考生");
+  // ======= 重點：只有選擇[應屆]時才顯示應屆，否則一律隱藏應屆 =======
+  if (!state.fresh && tut.fresh) reasons.push("應屆考生");
+  // =======
   if(state.exp && tut.exp!==true) reasons.push("無經驗");
   // 關鍵字
   if(state.special && Array.isArray(state.specialVal) && state.specialVal.length){
@@ -554,6 +556,12 @@ function renderTutors(){
   box.querySelector("#tc_none").style.display = showCount? "none":"block";
 }
 
+// ===== DSE成績判斷（只在特別要求包含才啟用成績篩選）=====
+function hasDSEGradeKeyword(txt) {
+  // 支援 5、5*、5**、5星、5星星（不分中英文）
+  return /5\s*(\*{1,2}|星{1,2}|星星)?/i.test(txt);
+}
+
 // ====== 提交個案、初始化篩選 ======
 box.querySelector("#tc_submit").onclick=function(){
   let txt = box.querySelector("#tc_case_input").value.trim();
@@ -570,12 +578,24 @@ box.querySelector("#tc_submit").onclick=function(){
   filterState.fee = !!c.fee;
   filterState.area = !!c.area;
   filterState.gender = !!c.gender;
-  filterState.grade = !!c.grade.length;
+
+  // 尋找「特別要求」欄位內容
+  let specialTxt = "";
+  let lines = txt.replace(/\r/g,"").split('\n').map(v=>v.trim());
+  for (let line of lines) {
+    if (/特別要求/.test(line)) {
+      let m = line.match(/特別要求[:：]?\s*(.*)/);
+      specialTxt = m ? m[1] : "";
+      break;
+    }
+  }
+  filterState.grade = hasDSEGradeKeyword(specialTxt);
+
   filterState.verified = !!c.verified;
   filterState.exp = !!c.exp;
   filterState.special = false;
   filterState.bad = true;
-  filterState.fresh = true;
+  filterState.fresh = false; // 預設關閉[應屆]
   box.querySelector("#tc_filter_box").style.display = "block";
   filterState.tutorData = parseTutorList();
   updateTagUI();
