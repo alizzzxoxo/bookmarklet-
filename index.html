@@ -254,8 +254,6 @@
       </div>
     </div>
   </div>
-  <!-- 只新增這一行 audio 元素 -->
-  <audio id="chiikawa-voice" src="https://github.com/alizzzxoxo/bookmarklet-/Usagi_Yahaaa.mp3"></audio>
   <script>
     // 動畫只在 hover 主文字時啟動
     function dragAnimInit(){
@@ -301,17 +299,6 @@
       trigger.addEventListener('blur', stopAnim);
     }
     window.addEventListener('DOMContentLoaded', dragAnimInit);
-
-    // 只新增這一段自動播放音效
-    window.addEventListener('DOMContentLoaded', function() {
-      var audio = document.getElementById('chiikawa-voice');
-      if (audio) {
-        audio.currentTime = 0;
-        audio.play().catch(function(err) {
-          // 瀏覽器阻擋自動播放時不處理
-        });
-      }
-    });
   </script>
 </body>
 </html>
