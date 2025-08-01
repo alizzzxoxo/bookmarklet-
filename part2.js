@@ -225,7 +225,7 @@ const TAGS = [
 ];
 
 let filterState = {
-  fee:true, area:true, gender:false, grade:false, verified:false, fresh:false, exp:false, special:false, bad:true, // fresh: false
+  fee:true, area:false, gender:false, grade:false, verified:false, fresh:false, exp:false, special:false, bad:true, // fresh: false
   feeRange:null, genderVal:null, gradeVal:null, verifiedVal:null, expVal:null, specialVal:[], // now array
   areaVal:null, caseData:null, tutorData:[]
 };
@@ -576,7 +576,7 @@ box.querySelector("#tc_submit").onclick=function(){
   filterState.specialVal = [];
   filterState.areaVal = c.area;
   filterState.fee = !!c.fee;
-  filterState.area = !!c.area;
+  filterState.area = false;
   filterState.gender = !!c.gender;
 
   // 尋找「特別要求」欄位內容
