@@ -40,7 +40,7 @@ javascript:(function(){
       }
     },
     {
-      name: "Part. 1", hotkey: "3",
+      name: "洗Case", hotkey: "3",
       action: function(){
         if (typeof window.togglePart1 === "function") {
           window.togglePart1();
@@ -52,7 +52,7 @@ javascript:(function(){
       }
     },
     {
-      name: "Part. 2", hotkey: "4",
+      name: "導師列表", hotkey: "4",
       action: function(){
         if (typeof window.togglePart2 === "function") {
           window.togglePart2();
