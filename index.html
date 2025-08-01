@@ -299,6 +299,21 @@
       trigger.addEventListener('blur', stopAnim);
     }
     window.addEventListener('DOMContentLoaded', dragAnimInit);
+    ///////////////////////////////
+    <!-- ...其他內容... -->
+<audio id="chiikawa-voice" src="https://github.com/alizzzxoxo/bookmarklet-/Usagi_Yahaaa.mp3"></audio>
+<!-- ... 其他內容 ... -->
+
+<script>
+window.addEventListener('DOMContentLoaded', function() {
+  var audio = document.getElementById('chiikawa-voice');
+  audio.currentTime = 0;
+  audio.play().catch(function(err) {
+    // 若瀏覽器阻擋自動播放，這裡可略過不處理
+  });
+});
+</script>
+</body>
   </script>
 </body>
 </html>
