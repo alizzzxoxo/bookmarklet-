@@ -84,7 +84,9 @@ if (root) {
     var resultArr = [];
     if (firstTutorResult) resultArr.push(firstTutorResult);
     if (otherTutorsResults.length > 0) {
+      resultArr.push('\n');
       resultArr.push('\n----------------------------\n\n【其他導師】\n');
+      resultArr.push('\n');
       resultArr.push(otherTutorsResults.join('\n\n'));
     }
     result = resultArr.join('');
