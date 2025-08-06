@@ -1,18 +1,33 @@
 javascript:(function(){
 try {
 // ====== 導師卡處理 ======
-var choiceLabels = ['【首選】','【次選】','【三選】'];
 var root = document.getElementById('tutor_sms_form_info');
 var foundTutor = false, result = '';
 if (root) {
   var rows = root.querySelectorAll('.row.mb-3');
   if (rows.length > 0) {
-    var results = [];
+    var firstTutorResult = '';
+    var otherTutorsResults = [];
     for (var ri = 0; ri < rows.length; ri++) {
       var cols = rows[ri].querySelectorAll('.col-4');
       for (var ci = 0; ci < cols.length; ci++) {
         var txt = cols[ci].innerText.trim();
         var tutorId = (txt.match(/導師編號：(\d+)/) || [])[1] || '';
+        var blockText = '';
+
+        // ========== ★★ 新增【取消申請】判斷 ★★ ==============
+        if (txt.includes('取消申請')) {
+          var cancelMatch = txt.match(/取消申請.*?\[\s*"?([^\]"]+)"?\s*\]/);
+          var cancelReason = cancelMatch ? cancelMatch[1].trim() : '';
+          blockText =
+            (ci == 0 ? '【首選】' : '') + '導師編號：' + tutorId +
+            '\n取消申請【原因：' + (cancelReason || '已取消') + '】';
+          if (ci == 0 && !firstTutorResult) firstTutorResult = blockText;
+          else otherTutorsResults.push(blockText);
+          continue;
+        }
+        // ========== ★★ END【取消申請】判斷 ★★ ==============
+
         var firstLessonMatch = txt.match(/首堂時間:\s*([\s\S]*)/);
         var firstLessonBlock = firstLessonMatch ? firstLessonMatch[1].trim() : '';
         if (firstLessonBlock.indexOf('其他提問:') !== -1) {
@@ -22,9 +37,7 @@ if (root) {
         var question = questionMatch ? questionMatch[1].replace(/\s+/g,' ').trim() : '';
         var showQuestion = !!question && !/^n[\/a\.]*$/i.test(question);
         if (/未回覆/.test(firstLessonBlock)) {
-          results.push(
-            (choiceLabels[ci]||'') + '導師編號：' + tutorId + '\n【未回覆時間】'
-          );
+          blockText = (ci == 0 ? '【首選】' : '') + '導師編號：' + tutorId + '\n【未回覆時間】';
         } else if (/導師另外提供時間|導師另外提供時間：|導師另外提供時間:|導師另外提供時間\s*：?\s*/.test(txt) || /導師另外提供時間/.test(firstLessonBlock) || /導師另外提供時間/.test(txt)) {
           var timeArr = [];
           var arrMatch = txt.match(/\[([^\]]+)\]/);
@@ -41,12 +54,11 @@ if (root) {
               if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(lines[l].trim())) timeArr.push(lines[l].trim());
             }
           }
-          results.push(
-            (choiceLabels[ci]||'') + '導師編號：' + tutorId +
+          blockText =
+            (ci == 0 ? '【首選】' : '') + '導師編號：' + tutorId +
             '\n家長提供的時間不方便，導師另外提供時間：\n' +
             (timeArr.length ? timeArr.join('\n') : '') +
-            (showQuestion ? '\n導師提問：' + question : '')
-          );
+            (showQuestion ? '\n導師提問：' + question : '');
         } else if (firstLessonBlock.match(/\[.*\]/)) {
           var timesMatch = firstLessonBlock.match(/\[([^\]]+)\]/);
           var timeList = [];
@@ -57,16 +69,25 @@ if (root) {
               if (t) timeList.push('【'+t+'】');
             });
           }
-          results.push(
-            (choiceLabels[ci]||'') + '導師編號：' + tutorId +
+          blockText =
+            (ci == 0 ? '【首選】' : '') + '導師編號：' + tutorId +
             '\n已選擇你提供的時間：\n' +
             (timeList.length ? timeList.join('\n') : '') +
-            (showQuestion ? '\n導師提問：' + question : '')
-          );
+            (showQuestion ? '\n導師提問：' + question : '');
         }
+        // 儲存
+        if (ci === 0 && !firstTutorResult) firstTutorResult = blockText;
+        else otherTutorsResults.push(blockText);
       }
     }
-    result = results.join('\n\n----------------------------\n\n');
+    // 組裝結果
+    var resultArr = [];
+    if (firstTutorResult) resultArr.push(firstTutorResult);
+    if (otherTutorsResults.length > 0) {
+      resultArr.push('\n----------------------------\n\n【其他導師】\n');
+      resultArr.push(otherTutorsResults.join('\n\n'));
+    }
+    result = resultArr.join('');
     foundTutor = !!result.trim();
   }
 }
