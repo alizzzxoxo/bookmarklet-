@@ -131,7 +131,7 @@ if (onlyReason.startsWith('不合適原因：')) onlyReason = onlyReason.replace
 (function(){
   document.querySelectorAll('#noTutorPopup').forEach(function(e){e.remove();});
 
-  var reasonTip = "【更新】會自動更新學費、不能面授要求<br>學歷、其他請自行檢查或編輯後再點擊【更新】";
+  var reasonTip = "💡提示：「更新」按鈕會自動更新學費不合適、不能面授要求<br>學歷、其他請自行檢查或編輯後再點擊「更新」";
 
   var popup = document.createElement('div');
   popup.id = 'noTutorPopup';
