@@ -92,7 +92,7 @@ if (root) {
   }
 }
 if (foundTutor) {
-  copyToClipboard(result, true); // 導師卡一律提示
+  copyToClipboard(result, true); // 導師卡一律提示 //
   return;
 }
 
