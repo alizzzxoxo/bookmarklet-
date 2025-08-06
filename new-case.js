@@ -128,8 +128,8 @@ javascript:(function(){
       + '</div>'
       + '<button id="pre_case" style="margin-right:10px;">上一個</button>'
       + '<button id="next_case" style="margin-right:10px;">下一個</button>'
-      + '<button id="copy_phone" style="margin-right:10px;">電話</button>'
-      + '<button id="copy_casecode">生成編號</button>'
+      + '<button id="copy_phone" style="margin-right:10px;">複製電話</button>'
+      + '<button id="copy_casecode">生成名稱</button>'
       + '<span style="float:right;cursor:pointer;font-size:16px;" id="close_popup">❌</span>'
       ;
 
