@@ -83,8 +83,8 @@ if(/\/cases_approve\/?$/.test(location.pathname)){
     </div>
     <div style="display:flex;gap:17px;">
       <button id="tc_phone" title="複製電話" style="background:#fff;border:1.5px solid #bbb;box-shadow:0 1px 5px #0001;color:#444;border-radius:8px;padding:9px 19px 9px 14px;display:flex;align-items:center;gap:7px;cursor:pointer;font-size:19px;font-weight:bold;">${iconPhone}電話</button>
-      <button id="tc_copycase" title="複製個案資料" style="background:#fff;border:1.5px solid #ffb658;box-shadow:0 1px 5px #ffb65833;color:#ff8a00;border-radius:8px;padding:9px 19px 9px 14px;display:flex;align-items:center;gap:7px;cursor:pointer;font-size:19px;font-weight:bold;">${iconCopy}copy</button>
-      <button id="tc_openlist" title="開啟導師列表" style="background:#fff;border:1.5px solid #d065b6;box-shadow:0 1px 5px #d065b622;color:#d065b6;border-radius:8px;padding:9px 19px 9px 14px;display:flex;align-items:center;gap:7px;cursor:pointer;font-size:19px;font-weight:bold;">${iconList}Info</button>
+      <button id="tc_copycase" title="複製個案資料" style="background:#fff;border:1.5px solid #ffb658;box-shadow:0 1px 5px #ffb65833;color:#ff8a00;border-radius:8px;padding:9px 19px 9px 14px;display:flex;align-items:center;gap:7px;cursor:pointer;font-size:19px;font-weight:bold;">${iconCopy}複製資料</button>
+      <button id="tc_openlist" title="開啟導師列表" style="background:#fff;border:1.5px solid #d065b6;box-shadow:0 1px 5px #d065b622;color:#d065b6;border-radius:8px;padding:9px 19px 9px 14px;display:flex;align-items:center;gap:7px;cursor:pointer;font-size:19px;font-weight:bold;">${iconList}列表</button>
     </div>
     <button id="tc_close" title="關閉浮窗" style="background:none;border:none;position:absolute;top:14px;right:15px;cursor:pointer;padding:2px;">${iconClose}</button>
   `;
